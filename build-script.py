@@ -77,7 +77,7 @@ def check_rsync():
             fatal_error('Error: Could not find rsync.')
 
 
-def generate_gyb_files(verbose):
+def generate_gyb_files(disable_line_directives, verbose):
     print('** Generating gyb Files **')
 
     check_gyb_exec()
@@ -103,11 +103,14 @@ def generate_gyb_files(verbose):
         # Slice off the '.gyb' to get the name for the output file
         output_file_name = gyb_file[:-4]
 
+        gyb_call = [GYB_EXEC, swiftsyntax_sources_dir + '/' + gyb_file]
+        gyb_call += ['-o', temp_files_dir + '/' + output_file_name]
+
+        if disable_line_directives:
+            gyb_call += ['--line-directive', '']
+
         # Generate the new file
-        check_call([GYB_EXEC] +
-                   [swiftsyntax_sources_dir + '/' + gyb_file] +
-                   ['-o', temp_files_dir + '/' + output_file_name],
-                   verbose=verbose)
+        check_call(gyb_call, verbose=verbose)
 
         # Copy the file if different from the file already present in 
         # gyb_generated
@@ -311,6 +314,10 @@ section for arguments that need to be specified for this.
     basic_group.add_argument('-r', '--release', action='store_true', help='''
       Build as a release build.
       ''')
+    basic_group.add_argument('--disable-gyb-line-directives', 
+                             action='store_true', help='''
+      Don't add '### sourceLocation' to the gyb-generated files.
+      ''')
 
     testing_group = parser.add_argument_group('Testing')
     testing_group.add_argument('-t', '--test', action='store_true',
@@ -344,7 +351,9 @@ section for arguments that need to be specified for this.
 
 
     try:
-        generate_gyb_files(args.verbose)
+        generate_gyb_files(disable_line_directives=
+                             args.disable_gyb_line_directives,
+                           verbose=args.verbose)
     except subprocess.CalledProcessError as e:
         printerr('Error: Generating .gyb files failed')
         printerr('Executing: %s' % ' '.join(e.cmd))
