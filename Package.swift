@@ -12,7 +12,7 @@ let package = Package(
     .testTarget(name: "SwiftSyntaxBuilderTest", dependencies: ["SwiftSyntaxBuilder"]),
     .target(name: "lit-test-helper", dependencies: ["SwiftSyntax"]),
     .testTarget(name: "PerformanceTest", dependencies: ["SwiftSyntax"], exclude: ["Inputs"]),
-    .binaryTarget(name: "_InternalSwiftSyntaxParser", path: "_InternalSwiftSyntaxParser.xcframework")
+    .binaryTarget(name: "_InternalSwiftSyntaxParser", url: "https://github.com/ahoppen/swift-syntax/releases/download/0.50500.1/_InternalSwiftSyntaxParser.xcframework.zip", checksum: "f1326cfbaee9924ba925c33a3c85fd326cdc2771f68c23653b7cd8d520d0afd4"),
     // Also see targets added below
   ]
 )
