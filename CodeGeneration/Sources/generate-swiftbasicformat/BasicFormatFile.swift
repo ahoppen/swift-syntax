@@ -27,16 +27,221 @@ let basicFormatFile = SourceFile {
     VariableDecl("open var indentation: TriviaPiece { .spaces(indentationLevel * 4) }")
     VariableDecl("public var indentedNewline: Trivia { Trivia(pieces: [.newlines(1), indentation]) }")
     VariableDecl("private var lastRewrittenToken: TokenSyntax?")
+    VariableDecl("private var putNextTokenOnNewLine: Bool = false")
 
-    for node in SYNTAX_NODES where !node.isBase {
-      if node.isSyntaxCollection {
-        makeSyntaxCollectionRewriteFunc(node: node)
-      } else {
-        makeLayoutNodeRewriteFunc(node: node)
+    FunctionDecl("""
+      open override func visitPre(_ node: Syntax) {
+        if let keyPath = getKeyPath(node), shouldIndent(keyPath) {
+          indentationLevel += 1
+        }
+        if let parent = node.parent, childrenSeparatedByNewline(parent) {
+          putNextTokenOnNewLine = true
+        }
+      }
+      """
+    )
+    FunctionDecl("""
+      open override func visitPost(_ node: Syntax) {
+        if let keyPath = getKeyPath(node), shouldIndent(keyPath) {
+          indentationLevel -= 1
+        }
+      }
+      """
+    )
+
+    FunctionDecl("""
+      open override func visit(_ node: TokenSyntax) -> TokenSyntax {
+        var leadingTrivia = node.leadingTrivia
+        var trailingTrivia = node.trailingTrivia
+        if requiresLeadingSpace(node.tokenKind) && leadingTrivia.isEmpty && lastRewrittenToken?.trailingTrivia.isEmpty != false {
+          leadingTrivia += .space
+        }
+        if requiresTrailingSpace(node.tokenKind) && trailingTrivia.isEmpty {
+          trailingTrivia += .space
+        }
+        if let keyPath = getKeyPath(Syntax(node)), requiresLeadingNewline(keyPath), !(leadingTrivia.first?.isNewline ?? false) {
+          leadingTrivia = .newline + leadingTrivia
+        }
+        leadingTrivia = leadingTrivia.indented(indentation: indentation)
+        trailingTrivia = trailingTrivia.indented(indentation: indentation)
+        let rewritten = TokenSyntax(
+          node.tokenKind,
+          leadingTrivia: leadingTrivia,
+          trailingTrivia: trailingTrivia,
+          presence: node.presence
+        )
+        lastRewrittenToken = rewritten
+        putNextTokenOnNewLine = false
+        return rewritten
+      }
+      """
+    )
+
+    FunctionDecl(
+      modifiers: [DeclModifier(name: .open)],
+      identifier: .identifier("shouldIndent"),
+      signature: FunctionSignature(
+        input: ParameterClause(parameterList: [
+          FunctionParameter(
+            firstName: Token.wildcard,
+            secondName: .identifier("keyPath"),
+            colon: .colon,
+            type: SimpleTypeIdentifier("AnyKeyPath")
+
+          )
+        ]),
+        output: ReturnClause(returnType: SimpleTypeIdentifier("Bool"))
+      )
+    ) {
+      SwitchStmt(expression: Expr("keyPath")) {
+        for node in SYNTAX_NODES where !node.isBase {
+          for child in node.children where child.isIndented {
+            SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: KeyPathExpr("\\\(node.type.syntaxBaseName).\(child.swiftName)")))])) {
+              ReturnStmt("return true")
+            }
+          }
+        }
+        SwitchCase(label: SwitchDefaultLabel()) {
+          ReturnStmt("return false")
+        }
       }
     }
 
-    createTokenFormatFunction()
+    FunctionDecl(
+      modifiers: [DeclModifier(name: .open)],
+      identifier: .identifier("requiresLeadingNewline"),
+      signature: FunctionSignature(
+        input: ParameterClause(parameterList: [
+          FunctionParameter(
+            firstName: Token.wildcard,
+            secondName: .identifier("keyPath"),
+            colon: .colon,
+            type: SimpleTypeIdentifier("AnyKeyPath")
+
+          )
+        ]),
+        output: ReturnClause(returnType: SimpleTypeIdentifier("Bool"))
+      )
+    ) {
+      SwitchStmt(expression: Expr("keyPath")) {
+        for node in SYNTAX_NODES where !node.isBase {
+          for child in node.children where child.requiresLeadingNewline {
+            SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: KeyPathExpr("\\\(node.type.syntaxBaseName).\(child.swiftName)")))])) {
+              ReturnStmt("return true")
+            }
+          }
+        }
+        SwitchCase(label: SwitchDefaultLabel()) {
+          ReturnStmt("return putNextTokenOnNewLine")
+        }
+      }
+    }
+
+    FunctionDecl(
+      modifiers: [DeclModifier(name: .open)],
+      identifier: .identifier("childrenSeparatedByNewline"),
+      signature: FunctionSignature(
+        input: ParameterClause(parameterList: [
+          FunctionParameter(
+            firstName: Token.wildcard,
+            secondName: .identifier("node"),
+            colon: .colon,
+            type: SimpleTypeIdentifier("Syntax")
+
+          )
+        ]),
+        output: ReturnClause(returnType: SimpleTypeIdentifier("Bool"))
+      )
+    ) {
+      SwitchStmt(expression: Expr("node.as(SyntaxEnum.self)")) {
+        for node in SYNTAX_NODES where !node.isBase {
+          if node.elementsSeparatedByNewline {
+            SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(".\(node.swiftSyntaxKind)")))])) {
+              ReturnStmt("return true")
+            }
+          }
+        }
+        SwitchCase(label: SwitchDefaultLabel()) {
+          ReturnStmt("return false")
+        }
+      }
+    }
+
+    FunctionDecl(
+      modifiers: [DeclModifier(name: .open)],
+      identifier: .identifier("requiresLeadingSpace"),
+      signature: FunctionSignature(
+        input: ParameterClause(parameterList: [
+          FunctionParameter(
+            firstName: Token.wildcard,
+            secondName: .identifier("tokenKind"),
+            colon: .colon,
+            type: SimpleTypeIdentifier("TokenKind")
+
+          )
+        ]),
+        output: ReturnClause(returnType: SimpleTypeIdentifier("Bool"))
+      )
+    ) {
+      SwitchStmt(expression: Expr("tokenKind")) {
+        for token in SYNTAX_TOKENS {
+          if token.requiresLeadingSpace {
+            SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(".\(token.swiftKind)")))])) {
+              ReturnStmt("return true")
+            }
+          }
+        }
+        SwitchCase(label: SwitchDefaultLabel()) {
+          ReturnStmt("return false")
+        }
+      }
+    }
+
+    FunctionDecl(
+      modifiers: [DeclModifier(name: .open)],
+      identifier: .identifier("requiresTrailingSpace"),
+      signature: FunctionSignature(
+        input: ParameterClause(parameterList: [
+          FunctionParameter(
+            firstName: Token.wildcard,
+            secondName: .identifier("tokenKind"),
+            colon: .colon,
+            type: SimpleTypeIdentifier("TokenKind")
+
+          )
+        ]),
+        output: ReturnClause(returnType: SimpleTypeIdentifier("Bool"))
+      )
+    ) {
+      SwitchStmt(expression: Expr("tokenKind")) {
+        for token in SYNTAX_TOKENS {
+          if token.requiresTrailingSpace {
+            SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(".\(token.swiftKind)")))])) {
+              ReturnStmt("return true")
+            }
+          }
+        }
+        SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: FunctionCallExpr(#".contextualKeyword("async")"#)))])) {
+          ReturnStmt("return true")
+        }
+        SwitchCase(label: SwitchDefaultLabel()) {
+          ReturnStmt("return false")
+        }
+      }
+    }
+
+    FunctionDecl("""
+      private func getKeyPath(_ node: Syntax) -> AnyKeyPath? {
+        guard let parent = node.parent else {
+          return nil
+        }
+        guard case .layout(let childrenKeyPaths) = type(of: parent.asProtocol(SyntaxProtocol.self)).structure else {
+          return nil
+        }
+        return childrenKeyPaths[node.indexInParent]
+      }
+      """
+    )
   }
 }
 
@@ -52,65 +257,6 @@ private func createChildVisitCall(childType: SyntaxBuildableType, rewrittenExpr:
     return FunctionCallExpr("\(optionalChained).cast(\(childType.syntaxBaseName).self)")
   } else {
     return visitCall
-  }
-}
-
-private func makeLayoutNodeRewriteFunc(node: Node) -> FunctionDecl {
-  let rewriteResultType: String
-  if node.type.baseType?.syntaxKind == "Syntax" && node.type.syntaxKind != "Missing" {
-    rewriteResultType = node.type.syntaxBaseName
-  } else {
-    rewriteResultType = node.type.baseType?.syntaxBaseName ?? node.type.syntaxBaseName
-  }
-  return FunctionDecl(
-    leadingTrivia: .newline,
-    modifiers: [DeclModifier(name: .open), DeclModifier(name: TokenSyntax.contextualKeyword("override", trailingTrivia: .space))],
-    identifier: .identifier("visit"),
-    signature: FunctionSignature(
-      input: ParameterClause(parameterList: [
-        FunctionParameter(
-          firstName: Token.wildcard,
-          secondName: .identifier("node"),
-          colon: .colon,
-          type: Type(node.type.syntaxBaseName)
-
-        )
-      ]),
-      output: ReturnClause(returnType: Type(rewriteResultType))
-    )
-  ) {
-    for child in node.children {
-      if child.isIndented {
-        SequenceExpr("indentationLevel += 1")
-      }
-      let variableLetVar = child.requiresLeadingNewline ? "var" : "let"
-      VariableDecl("\(variableLetVar) \(child.swiftName) = \(createChildVisitCall(childType: child.type, rewrittenExpr: MemberAccessExpr("node.\(child.swiftName)")))")
-      if child.requiresLeadingNewline {
-        IfStmt(
-          """
-          if \(child.swiftName).leadingTrivia.first?.isNewline != true {
-            \(child.swiftName).leadingTrivia = indentedNewline + \(child.swiftName).leadingTrivia
-          }
-          """
-        )
-      }
-      if child.isIndented {
-        SequenceExpr("indentationLevel -= 1")
-      }
-    }
-    let reconstructed = FunctionCallExpr(calledExpression: Expr("\(node.type.syntaxBaseName)")) {
-      for child in node.children {
-        TupleExprElement(
-          label: child.isUnexpectedNodes ? nil : child.swiftName,
-          expression: Expr(child.swiftName)
-        )
-      }
-    }
-    if rewriteResultType != node.type.syntaxBaseName {
-      ReturnStmt("return \(rewriteResultType)(\(reconstructed))")
-    } else {
-      ReturnStmt("return \(reconstructed)")
-    }
   }
 }
 
@@ -155,86 +301,5 @@ private func makeSyntaxCollectionRewriteFunc(node: Node) -> FunctionDecl {
       )
     }
     ReturnStmt("return \(node.type.syntaxBaseName)(formattedChildren)")
-  }
-}
-
-private func createTokenFormatFunction() -> FunctionDecl {
-  return FunctionDecl(
-    leadingTrivia: .newline,
-    modifiers: [DeclModifier(name: .open), DeclModifier(name: TokenSyntax.contextualKeyword("override", trailingTrivia: .space))],
-    identifier: .identifier("visit"),
-    signature: FunctionSignature(
-      input: ParameterClause(parameterList: [
-        FunctionParameter(
-          firstName: Token.wildcard,
-          secondName: .identifier("node"),
-          colon: .colon,
-          type: Type("TokenSyntax")
-
-        )
-      ]),
-      output: ReturnClause(returnType: Type("TokenSyntax"))
-    )
-  ) {
-    VariableDecl("var leadingTrivia = node.leadingTrivia")
-    VariableDecl("var trailingTrivia = node.trailingTrivia")
-    SwitchStmt(expression: MemberAccessExpr(base: "node", name: "tokenKind")) {
-      for token in SYNTAX_TOKENS where token.name != "ContextualKeyword" {
-        SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(name: token.swiftKind)))])) {
-          if token.requiresLeadingSpace {
-            IfStmt(
-              """
-              if leadingTrivia.isEmpty && lastRewrittenToken?.trailingTrivia.isEmpty != false {
-                leadingTrivia += .space
-              }
-              """
-            )
-          }
-          if token.requiresTrailingSpace {
-            IfStmt(
-              """
-              if trailingTrivia.isEmpty {
-                trailingTrivia += .space
-              }
-              """
-            )
-          }
-          if !token.requiresLeadingSpace && !token.requiresTrailingSpace {
-            BreakStmt("break")
-          }
-        }
-      }
-      SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(name: "eof")))])) {
-        BreakStmt("break")
-      }
-      SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(name: "contextualKeyword")))])) {
-        SwitchStmt(
-          """
-          switch node.text {
-          case "async":
-            if trailingTrivia.isEmpty {
-              trailingTrivia += .space
-            }
-          default:
-            break
-          }
-          """
-        )
-      }
-    }
-    SequenceExpr("leadingTrivia = leadingTrivia.indented(indentation: indentation)")
-    SequenceExpr("trailingTrivia = trailingTrivia.indented(indentation: indentation)")
-    VariableDecl(
-      """
-      let rewritten = TokenSyntax(
-        node.tokenKind,
-        leadingTrivia: leadingTrivia,
-        trailingTrivia: trailingTrivia,
-        presence: node.presence
-      )
-      """
-    )
-    SequenceExpr("lastRewrittenToken = rewritten")
-    ReturnStmt("return rewritten")
   }
 }
