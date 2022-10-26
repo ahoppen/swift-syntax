@@ -46,6 +46,7 @@ add_library(SwiftSyntax STATIC
   gyb_generated/SyntaxTraits.swift
   gyb_generated/SyntaxTransform.swift
   gyb_generated/SyntaxVisitor.swift
+  gyb_generated/TokenChoices.swift
   gyb_generated/TokenKind.swift
   gyb_generated/Tokens.swift
   gyb_generated/Trivia.swift
