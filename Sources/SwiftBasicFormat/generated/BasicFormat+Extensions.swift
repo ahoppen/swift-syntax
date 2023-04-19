@@ -245,6 +245,8 @@ fileprivate extension AnyKeyPath {
       return false
     case \FunctionParameterSyntax.secondName:
       return true
+    case \MissingExprSyntax.placeholder:
+      return false
     default:
       return nil
     }
@@ -261,6 +263,8 @@ fileprivate extension AnyKeyPath {
     case \DictionaryExprSyntax.content:
       return false
     case \DynamicReplacementArgumentsSyntax.forLabel:
+      return false
+    case \MissingExprSyntax.placeholder:
       return false
     case \SwitchCaseLabelSyntax.colon:
       return false

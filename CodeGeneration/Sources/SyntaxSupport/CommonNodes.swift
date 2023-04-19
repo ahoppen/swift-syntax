@@ -165,7 +165,13 @@ public let COMMON_NODES: [Node] = [
   Node(
     name: "MissingExpr",
     nameForDiagnostics: "expression",
-    kind: "Expr"
+    kind: "Expr",
+    children: [
+      Child(
+        name: "Placeholder",
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false)
+      )
+    ]
   ),
 
   Node(

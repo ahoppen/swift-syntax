@@ -117,6 +117,15 @@ extension Parser {
   }
 }
 
+extension RawMissingExprSyntax {
+  public init(arena: __shared SyntaxArena) {
+    self.init(
+      placeholder: RawTokenSyntax(missing: .identifier, text: "<#expression#>", arena: arena),
+      arena: arena
+    )
+  }
+}
+
 extension Parser {
   /// Parse a sequence of expressions.
   ///

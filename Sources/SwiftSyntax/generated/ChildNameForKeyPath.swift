@@ -2128,8 +2128,12 @@ internal func childName(_ keyPath: AnyKeyPath) -> String? {
     return "modifiers"
   case \MissingDeclSyntax.unexpectedAfterModifiers:
     return "unexpectedAfterModifiers"
-  case \MissingExprSyntax.unexpected:
-    return "unexpected"
+  case \MissingExprSyntax.unexpectedBeforePlaceholder:
+    return "unexpectedBeforePlaceholder"
+  case \MissingExprSyntax.placeholder:
+    return "placeholder"
+  case \MissingExprSyntax.unexpectedAfterPlaceholder:
+    return "unexpectedAfterPlaceholder"
   case \MissingPatternSyntax.unexpected:
     return "unexpected"
   case \MissingStmtSyntax.unexpected:
