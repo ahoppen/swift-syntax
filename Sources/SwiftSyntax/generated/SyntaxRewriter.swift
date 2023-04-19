@@ -6941,4 +6941,10 @@ open class SyntaxRewriter {
       return node
     }
   }
+
+  public func walk(_ node: Syntax) -> Syntax {
+    let rewritten = self.visit(node)
+    let arena = SyntaxArena()
+    return Syntax(node.data.replacingSelf(rewritten.raw, arena: arena))
+  }
 }
