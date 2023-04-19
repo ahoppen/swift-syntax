@@ -31,9 +31,16 @@ open class BasicFormat: SyntaxRewriter {
   /// This is used as a reference-point to indent user-indented code.
   var anchorPoints: [TokenSyntax: Trivia] = [:]
 
-  public init(indentationIncrement: Trivia = .spaces(4), initialIndentation: Trivia = []) {
+  public let viewMode: SyntaxTreeViewMode
+
+  public init(
+    indentationIncrement: Trivia = .spaces(4),
+    initialIndentation: Trivia = [],
+    viewMode: SyntaxTreeViewMode = .sourceAccurate,
+  ) {
     self.indentationIncrement = indentationIncrement
     self.indentationStack = [initialIndentation]
+    self.viewMode = viewMode
   }
 
   // MARK: - Updating indentation level
@@ -48,7 +55,7 @@ open class BasicFormat: SyntaxRewriter {
 
   open override func visitPre(_ node: Syntax) {
     if requiresIndent(node) {
-      if let firstToken = node.firstToken(viewMode: .sourceAccurate),
+      if let firstToken = node.firstToken(viewMode: viewMode),
         let tokenIndentation = firstToken.leadingTrivia.indentation(isOnNewline: false),
         !tokenIndentation.isEmpty
       {
@@ -94,7 +101,7 @@ open class BasicFormat: SyntaxRewriter {
     var ancestor: Syntax = Syntax(token)
     while let parent = ancestor.parent {
       ancestor = parent
-      if ancestor.firstToken(viewMode: .sourceAccurate) != token {
+      if ancestor.firstToken(viewMode: viewMode) != token {
         break
       }
       if let ancestorsParent = ancestor.parent, childrenSeparatedByNewline(ancestorsParent) {
@@ -156,7 +163,7 @@ open class BasicFormat: SyntaxRewriter {
 
   open override func visit(_ token: TokenSyntax) -> TokenSyntax {
     lazy var previousTokenWillEndWithBlank: Bool = {
-      guard let previousToken = token.previousToken(viewMode: .sourceAccurate) else {
+      guard let previousToken = token.previousToken(viewMode: viewMode) else {
         return false
       }
       return previousToken.trailingTrivia.pieces.last?.isBlank ?? false
@@ -164,7 +171,7 @@ open class BasicFormat: SyntaxRewriter {
     }()
 
     lazy var previousTokenWillEndInNewline: Bool = {
-      guard let previousToken = token.previousToken(viewMode: .sourceAccurate) else {
+      guard let previousToken = token.previousToken(viewMode: viewMode) else {
         // Assume that the start of the tree is equivalent to a newline so we
         // don't add a leading newline to the file.
         return true
@@ -173,7 +180,7 @@ open class BasicFormat: SyntaxRewriter {
     }()
 
     lazy var nextTokenWillStartWithBlank: Bool = {
-      guard let nextToken = token.nextToken(viewMode: .sourceAccurate) else {
+      guard let nextToken = token.nextToken(viewMode: viewMode) else {
         return false
       }
       return nextToken.leadingTrivia.first?.isBlank ?? false
@@ -182,7 +189,7 @@ open class BasicFormat: SyntaxRewriter {
     }()
 
     lazy var nextTokenWillStartWithNewline: Bool = {
-      guard let nextToken = token.nextToken(viewMode: .sourceAccurate) else {
+      guard let nextToken = token.nextToken(viewMode: viewMode) else {
         return false
       }
       return nextToken.leadingTrivia.first?.isNewline ?? false
@@ -190,7 +197,7 @@ open class BasicFormat: SyntaxRewriter {
     }()
 
     lazy var trailingTriviaAndNextTokensLeadingTriviaWhitespace: Trivia = {
-      let nextToken = token.nextToken(viewMode: .sourceAccurate)
+      let nextToken = token.nextToken(viewMode: viewMode)
       let nextTokenLeadingWhitespace = nextToken?.leadingTrivia.prefix(while: { $0.isIndentationWhitespace }) ?? []
       return trailingTrivia + Trivia(pieces: nextTokenLeadingWhitespace)
     }()
@@ -267,7 +274,7 @@ open class BasicFormat: SyntaxRewriter {
     var ancestor: Syntax = Syntax(token)
     while let parent = ancestor.parent {
       ancestor = parent
-      if let firstToken = parent.firstToken(viewMode: .sourceAccurate),
+      if let firstToken = parent.firstToken(viewMode: viewMode),
         let anchorPointIndentation = anchorPoints[firstToken]
       {
         return anchorPointIndentation

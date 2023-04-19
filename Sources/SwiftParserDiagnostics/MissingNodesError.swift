@@ -30,7 +30,7 @@ fileprivate enum NodesDescriptionPart {
     switch self {
     case .tokensWithDefaultText(var tokens):
       if format {
-        tokens = tokens.map({ BasicFormat().visit($0) })
+        tokens = tokens.map({ BasicFormat(viewMode: .all).visit($0) })
       }
       if !tokens.isEmpty {
         tokens[0] = tokens[0].with(\.leadingTrivia, [])
