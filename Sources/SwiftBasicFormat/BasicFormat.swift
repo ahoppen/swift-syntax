@@ -36,7 +36,7 @@ open class BasicFormat: SyntaxRewriter {
   public init(
     indentationIncrement: Trivia = .spaces(4),
     initialIndentation: Trivia = [],
-    viewMode: SyntaxTreeViewMode = .sourceAccurate,
+    viewMode: SyntaxTreeViewMode = .sourceAccurate
   ) {
     self.indentationIncrement = indentationIncrement
     self.indentationStack = [initialIndentation]
@@ -73,7 +73,7 @@ open class BasicFormat: SyntaxRewriter {
     }
   }
 
-  // MARK: - Indentation behavior customization points
+  // MARK: - Customization points
 
   /// Whether a leading newline on `token` should be added.
   open func requiresIndent<T: SyntaxProtocol>(_ node: T) -> Bool {
@@ -127,39 +127,110 @@ open class BasicFormat: SyntaxRewriter {
     }
   }
 
-  /// Whether a leading space on `token` should be added.
-  open func requiresLeadingBlank(_ token: TokenSyntax) -> Bool {
-    switch (token.previousToken(viewMode: .sourceAccurate)?.tokenKind, token.tokenKind) {
-    case (.leftParen, .leftBrace):  // Ensures there is not a space in `.map({ $0.foo })`
+  /// Whether a `first` and `second` need to be separated by a space.
+  open func requiresBlank(between first: TokenSyntax?, and second: TokenSyntax?) -> Bool {
+    switch first?.tokenKind {
+    case nil,
+      .eof,
+      .atSign,
+      .backslash,
+      .backtick,
+      .extendedRegexDelimiter,
+      .leftAngle,
+      .leftBrace,
+      .leftParen,
+      .leftSquareBracket,
+      .multilineStringQuote,
+      .period,
+      .pound,
+      .prefixAmpersand,
+      .prefixOperator,
+      .rawStringDelimiter,
+      .regexLiteralPattern,
+      .regexSlash,
+      .singleQuote,
+      .stringQuote,
+      .stringSegment:
+      return false
+    default:
+      break
+    }
+    switch second?.tokenKind {
+    case nil,
+      .eof,
+      .colon,
+      .comma,
+      .ellipsis,
+      .exclamationMark,
+      .postfixOperator,
+      .postfixQuestionMark,
+      .rightAngle,
+      .rightBrace,
+      .rightParen,
+      .rightSquareBracket,
+      .semicolon:
       return false
     default:
       break
     }
 
-    return token.requiresLeadingSpace
+    switch (first?.tokenKind, second?.tokenKind) {
+    case (.exclamationMark, .leftParen),  // myOptionalClosure!()
+      (.exclamationMark, .period),  // myOptionalBar!.foo()
+      (.keyword(.as), .exclamationMark),  // as!
+      (.keyword(.as), .postfixQuestionMark),  // as?
+      (.keyword(.try), .exclamationMark),  // try!
+      (.keyword(.try), .postfixQuestionMark),  // try?`
+      (.postfixQuestionMark, .leftParen),  // init?() or myOptionalClosure?()
+      (.postfixQuestionMark, .rightAngle),  // ContiguousArray<RawSyntax?>
+      (.postfixQuestionMark, .rightParen),  // myOptionalClosure?()
+      (.identifier, .leftParen),  // foo()
+      (.identifier, .period),  // a.b
+      (.dollarIdentifier, .period),  // a.b
+      (.keyword(.self), .period),  // self.someProperty
+      (.keyword(.Self), .period),  // self.someProperty
+      (.keyword(.`init`), .leftParen),  // init()
+      (.rightParen, .period),  // foo().bar
+      (.identifier, .leftAngle),  // MyType<Int>
+      (.rightAngle, .leftParen),  // func foo<T>(x: T)
+      (.keyword(.subscript), .leftParen),  // subscript(x: Int)
+      (.keyword(.super), .period),  // super.someProperty
+      (.poundUnavailableKeyword, .leftParen),  // #unavailable(...)
+      (.postfixQuestionMark, .period):  // someOptional?.someProperty
+      return false
+    default:
+      break
+    }
+
+    switch first?.keyPathInParent {
+    case \ExpressionSegmentSyntax.backslash,
+      \ExpressionSegmentSyntax.rightParen,
+      \DeclNameArgumentSyntax.colon:
+      return false
+    default:
+      break
+    }
+
+    return true
   }
 
-  /// Whether a trailing space on `token` should be added.
-  open func requiresTrailingBlank(_ token: TokenSyntax) -> Bool {
-    switch (token.tokenKind, token.nextToken(viewMode: .sourceAccurate)?.tokenKind) {
-    case (.exclamationMark, .leftParen),  // Ensures there is not a space in `myOptionalClosure!()`
-      (.exclamationMark, .period),  // Ensures there is not a space in `myOptionalBar!.foo()`
-      (.keyword(.as), .exclamationMark),  // Ensures there is not a space in `as!`
-      (.keyword(.as), .postfixQuestionMark),  // Ensures there is not a space in `as?`
-      (.keyword(.try), .exclamationMark),  // Ensures there is not a space in `try!`
-      (.keyword(.try), .postfixQuestionMark),  // Ensures there is not a space in `try?`:
-      (.postfixQuestionMark, .leftParen),  // Ensures there is not a space in `init?()` or `myOptionalClosure?()`s
-      (.postfixQuestionMark, .rightAngle),  // Ensures there is not a space in `ContiguousArray<RawSyntax?>`
-      (.postfixQuestionMark, .rightParen):  // Ensures there is not a space in `myOptionalClosure?()`
-      return false
-    default:
-      break
-    }
-
-    return token.requiresTrailingSpace
+  /// Whether the formatter should consider this token as being mutable.
+  /// This allows the diagnostic generator to only assume that missing nodes
+  /// will be mutated. Thus, if two tokens need to be separated by a space, it
+  /// will not be assumed that the space is added to an immutable previous node.
+  open func isMutable(_ token: TokenSyntax) -> Bool {
+    return true
   }
 
   // MARK: - Formatting a token
+
+  private func requiresLeadingBlank(_ token: TokenSyntax) -> Bool {
+    return requiresBlank(between: token.previousToken(viewMode: viewMode), and: token)
+  }
+
+  private func requiresTrailingBlank(_ token: TokenSyntax) -> Bool {
+    return requiresBlank(between: token, and: token.nextToken(viewMode: viewMode))
+  }
 
   open override func visit(_ token: TokenSyntax) -> TokenSyntax {
     lazy var previousTokenWillEndWithBlank: Bool = {
@@ -167,7 +238,7 @@ open class BasicFormat: SyntaxRewriter {
         return false
       }
       return previousToken.trailingTrivia.pieces.last?.isBlank ?? false
-        || requiresTrailingBlank(previousToken)
+        || (requiresTrailingBlank(previousToken) && isMutable(previousToken))
     }()
 
     lazy var previousTokenWillEndInNewline: Bool = {
@@ -184,8 +255,8 @@ open class BasicFormat: SyntaxRewriter {
         return false
       }
       return nextToken.leadingTrivia.first?.isBlank ?? false
-        || requiresLeadingBlank(nextToken)
-        || requiresLeadingNewline(nextToken)
+        || (requiresLeadingBlank(nextToken) && isMutable(nextToken))
+        || (requiresLeadingNewline(nextToken) && isMutable(nextToken))
     }()
 
     lazy var nextTokenWillStartWithNewline: Bool = {
@@ -193,7 +264,7 @@ open class BasicFormat: SyntaxRewriter {
         return false
       }
       return nextToken.leadingTrivia.first?.isNewline ?? false
-        || requiresLeadingNewline(nextToken)
+        || (requiresLeadingNewline(nextToken) && isMutable(nextToken))
     }()
 
     lazy var trailingTriviaAndNextTokensLeadingTriviaWhitespace: Trivia = {

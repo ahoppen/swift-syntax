@@ -19,7 +19,7 @@ public class SyntaxTests: XCTestCase {
     XCTAssertTrue(TokenSyntax.keyword(.func, presence: .missing).hasError)
     XCTAssertFalse(TokenSyntax.keyword(.func, presence: .present).hasError)
     XCTAssertTrue(UnexpectedNodesSyntax([]).hasError)
-    XCTAssertTrue(MissingExprSyntax().hasError)
+    XCTAssertTrue(MissingExprSyntax(placeholder: .identifier("", presence: .missing)).hasError)
     XCTAssertFalse(CodeBlockItemListSyntax([]).hasError)
 
     XCTAssertTrue(

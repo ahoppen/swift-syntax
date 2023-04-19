@@ -19,7 +19,7 @@ public class SyntaxChildrenTests: XCTestCase {
   public func testIterateWithAllPresent() throws {
     let returnStmt = ReturnStmtSyntax(
       returnKeyword: .keyword(.return),
-      expression: ExprSyntax(MissingExprSyntax())
+      expression: ExprSyntax(MissingExprSyntax(placeholder: .identifier("", presence: .missing)))
     )
 
     var iterator = returnStmt.children(viewMode: .sourceAccurate).makeIterator()
@@ -61,7 +61,7 @@ public class SyntaxChildrenTests: XCTestCase {
   }
 
   public func testMissingNodes() throws {
-    let node = ReturnStmtSyntax(returnKeyword: .keyword(.return), expression: ExprSyntax(MissingExprSyntax()))
+    let node = ReturnStmtSyntax(returnKeyword: .keyword(.return), expression: ExprSyntax(MissingExprSyntax(placeholder: .identifier("", presence: .missing))))
 
     var sourceAccurateIt = node.children(viewMode: .sourceAccurate).makeIterator()
     try XCTAssertNext(&sourceAccurateIt) { $0.is(TokenSyntax.self) }
@@ -70,5 +70,15 @@ public class SyntaxChildrenTests: XCTestCase {
     var fixedUpIt = node.children(viewMode: .fixedUp).makeIterator()
     try XCTAssertNext(&fixedUpIt) { $0.is(TokenSyntax.self) }
     try XCTAssertNext(&fixedUpIt) { $0.is(MissingExprSyntax.self) }
+  }
+
+  public func testTokenSequencesWithMissingChild() {
+    let codeBlock = CodeBlockSyntax(
+      leftBrace: .leftBraceToken(presence: .missing),
+      statements: [],
+      rightBrace: .rightBraceToken(presence: .missing)
+    )
+
+    XCTAssertEqual(Array(codeBlock.tokens(viewMode: .all)).count, 2)
   }
 }

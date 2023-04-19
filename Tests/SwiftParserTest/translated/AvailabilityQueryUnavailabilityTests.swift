@@ -93,7 +93,7 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
         DiagnosticSpec(message: "expected '(', '@availability' arguments, and ')' in availability condition", fixIts: ["insert '(', '@availability' arguments, and ')'"])
       ],
       fixedSource: """
-        if #unavailable( <#identifier#>){
+        if #unavailable(<#identifier#>) {
         }
         """
     )
@@ -106,11 +106,10 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"]),
-        DiagnosticSpec(message: "expected ')' to end availability condition", fixIts: ["insert ')'"]),
+        DiagnosticSpec(message: "expected platform and ')' to end availability condition", fixIts: ["insert platform and ')'"])
       ],
       fixedSource: """
-        if #unavailable(<#identifier#> ){
+        if #unavailable(<#identifier#>) {
         }
         """
     )
@@ -324,7 +323,7 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
         DiagnosticSpec(message: "expected ')' to end availability condition", fixIts: ["insert ')'"]),
       ],
       fixedSource: """
-        if #unavailable(OSX 10.51,<#identifier#> ){
+        if #unavailable(OSX 10.51, <#identifier#>) {
         }
         """
     )
@@ -340,7 +339,7 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
         DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"])
       ],
       fixedSource: """
-        if #unavailable(OSX 10.51,<#identifier#>) {
+        if #unavailable(OSX 10.51, <#identifier#>) {
         }
         """
     )

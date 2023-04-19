@@ -55,7 +55,7 @@ class PresentMaker: SyntaxRewriter {
         let newKind = TokenKind.fromRaw(kind: rawKind, text: rawKind.defaultText.map(String.init) ?? "<#\(token.tokenKind.nameForDiagnostics)#>")
         presentToken = token.with(\.tokenKind, newKind).with(\.presence, .present)
       }
-      return BasicFormat().visit(presentToken)
+      return presentToken
     } else {
       return token
     }
@@ -85,36 +85,6 @@ class PresentMaker: SyntaxRewriter {
         )
       )
     )
-  }
-
-  override func visit(_ node: MissingExprSyntax) -> ExprSyntax {
-    return ExprSyntax(IdentifierExprSyntax(identifier: .identifier("<#expression#>")))
-  }
-
-  override func visit(_ node: MissingPatternSyntax) -> PatternSyntax {
-    return PatternSyntax(IdentifierPatternSyntax(identifier: .identifier("<#pattern#>")))
-  }
-
-  override func visit(_ node: MissingStmtSyntax) -> StmtSyntax {
-    return StmtSyntax(
-      DoStmtSyntax(
-        doKeyword: .keyword(.do, presence: .missing),
-        UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("<#statement#>"))]),
-        body: CodeBlockSyntax(
-          leftBrace: .leftBraceToken(presence: .missing),
-          statements: CodeBlockItemListSyntax([]),
-          rightBrace: .rightBraceToken(presence: .missing)
-        )
-      )
-    )
-  }
-
-  override func visit(_ node: MissingTypeSyntax) -> TypeSyntax {
-    return TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("<#type#>")))
-  }
-
-  override func visit(_ node: MissingSyntax) -> Syntax {
-    return Syntax(IdentifierExprSyntax(identifier: .identifier("<#syntax#>")))
   }
 }
 

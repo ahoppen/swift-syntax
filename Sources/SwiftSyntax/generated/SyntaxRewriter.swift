@@ -6941,8 +6941,10 @@ open class SyntaxRewriter {
       return node
     }
   }
-
-  public func walk(_ node: Syntax) -> Syntax {
+  
+  /// Rewrite `node` and anchor, making sure that the rewritten node also has
+  /// a parent if `node` had one.
+  public func rewrite(_ node: Syntax) -> Syntax {
     let rewritten = self.visit(node)
     let arena = SyntaxArena()
     return Syntax(node.data.replacingSelf(rewritten.raw, arena: arena))

@@ -153,8 +153,6 @@ extension RawMissingTypeSyntax {
   }
 }
 
-
-
 extension Parser {
   /// Parse a sequence of expressions.
   ///

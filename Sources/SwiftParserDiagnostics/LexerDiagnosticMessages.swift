@@ -209,8 +209,8 @@ public extension SwiftSyntax.TokenDiagnostic {
         FixIt(message: .replaceCurlyQuoteByNormalQuote, changes: [.replace(oldNode: Syntax(token), newNode: Syntax(fixedToken))])
       ]
     case .equalMustHaveConsistentWhitespaceOnBothSides:
-      let hasLeadingSpace = token.previousToken(viewMode: .all)?.trailingTrivia.contains(where: { $0.isSpaceOrTab }) ?? false
-      let hasTrailingSpace = token.trailingTrivia.contains { $0.isSpaceOrTab }
+      let hasLeadingSpace = token.previousToken(viewMode: .all)?.trailingTrivia.contains(where: { $0.isIndentationWhitespace }) ?? false
+      let hasTrailingSpace = token.trailingTrivia.contains { $0.isIndentationWhitespace }
       var changes: [FixIt.Change] = []
 
       if !hasLeadingSpace {

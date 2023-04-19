@@ -15,7 +15,7 @@ import SwiftSyntax
 
 public class VisitorTests: XCTestCase {
   public func testVisitMissingNodes() {
-    let node = ReturnStmtSyntax(returnKeyword: .keyword(.return), expression: ExprSyntax(MissingExprSyntax()))
+    let node = ReturnStmtSyntax(returnKeyword: .keyword(.return), expression: ExprSyntax(MissingExprSyntax(placeholder: .identifier("", presence: .missing))))
 
     class MissingExprChecker: SyntaxVisitor {
       var didSeeMissingExprSyntax = false
