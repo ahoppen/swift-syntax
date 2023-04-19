@@ -463,3 +463,105 @@ extension RawTriviaPiece {
     }
   }
 }
+
+extension TriviaPiece {
+  public var isBlank: Bool {
+    switch self {
+    case .carriageReturns:
+      return true
+    case .carriageReturnLineFeeds:
+      return true
+    case .formfeeds:
+      return true
+    case .newlines:
+      return true
+    case .spaces:
+      return true
+    case .tabs:
+      return true
+    case .verticalTabs:
+      return true
+    default:
+      return false
+    }
+  }
+  
+  public var isNewline: Bool {
+    switch self {
+    case .carriageReturns:
+      return true
+    case .carriageReturnLineFeeds:
+      return true
+    case .formfeeds:
+      return true
+    case .newlines:
+      return true
+    case .verticalTabs:
+      return true
+    default:
+      return false
+    }
+  }
+  
+  public var isIndentationWhitespace: Bool {
+    switch self {
+    case .spaces:
+      return true
+    case .tabs:
+      return true
+    default:
+      return false
+    }
+  }
+}
+
+extension RawTriviaPiece {
+  public var isBlank: Bool {
+    switch self {
+    case .carriageReturns:
+      return true
+    case .carriageReturnLineFeeds:
+      return true
+    case .formfeeds:
+      return true
+    case .newlines:
+      return true
+    case .spaces:
+      return true
+    case .tabs:
+      return true
+    case .verticalTabs:
+      return true
+    default:
+      return false
+    }
+  }
+  
+  public var isNewline: Bool {
+    switch self {
+    case .carriageReturns:
+      return true
+    case .carriageReturnLineFeeds:
+      return true
+    case .formfeeds:
+      return true
+    case .newlines:
+      return true
+    case .verticalTabs:
+      return true
+    default:
+      return false
+    }
+  }
+  
+  public var isIndentationWhitespace: Bool {
+    switch self {
+    case .spaces:
+      return true
+    case .tabs:
+      return true
+    default:
+      return false
+    }
+  }
+}

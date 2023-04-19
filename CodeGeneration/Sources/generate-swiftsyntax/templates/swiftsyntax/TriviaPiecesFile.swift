@@ -264,4 +264,57 @@ let triviaPiecesFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
       }
     }
   }
+
+  try! generateIsHelpers(for: "TriviaPiece")
+
+  try! generateIsHelpers(for: "RawTriviaPiece")
+}
+
+fileprivate func generateIsHelpers(for pieceName: String) throws -> ExtensionDeclSyntax {
+  return try ExtensionDeclSyntax("extension \(raw: pieceName)") {
+    try VariableDeclSyntax("public var isBlank: Bool") {
+      try SwitchExprSyntax("switch self") {
+        for trivia in TRIVIAS {
+          if trivia.isBlank {
+            SwitchCaseSyntax("case .\(raw: trivia.enumCaseName):") {
+              StmtSyntax("return true")
+            }
+          }
+        }
+        SwitchCaseSyntax("default:") {
+          StmtSyntax("return false")
+        }
+      }
+    }
+
+    try VariableDeclSyntax("public var isNewline: Bool") {
+      try SwitchExprSyntax("switch self") {
+        for trivia in TRIVIAS {
+          if trivia.isNewLine {
+            SwitchCaseSyntax("case .\(raw: trivia.enumCaseName):") {
+              StmtSyntax("return true")
+            }
+          }
+        }
+        SwitchCaseSyntax("default:") {
+          StmtSyntax("return false")
+        }
+      }
+    }
+
+    DeclSyntax(
+      """
+      public var isIndentationWhitespace: Bool {
+        switch self {
+        case .spaces:
+          return true
+        case .tabs:
+          return true
+        default:
+          return false
+        }
+      }
+      """
+    )
+  }
 }
