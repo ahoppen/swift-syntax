@@ -70,11 +70,11 @@ fileprivate enum NodesDescriptionPart {
         } else {
           let (rawKind, text) = token.tokenKind.decomposeToRaw()
           if let text = text, !text.isEmpty {
-            let presentToken = TokenSyntax(token.tokenKind, presence: .present)
+            let presentToken = token.with(\.presence, .present)
             newPart = .tokensWithDefaultText([presentToken])
           } else if let defaultText = rawKind.defaultText {
             let newKind = TokenKind.fromRaw(kind: rawKind, text: String(syntaxText: defaultText))
-            let presentToken = TokenSyntax(newKind, presence: .present)
+            let presentToken = token.with(\.tokenKind, newKind).with(\.presence, .present)
             newPart = .tokensWithDefaultText([presentToken])
           } else {
             newPart = .tokenWithoutDefaultText(token)
