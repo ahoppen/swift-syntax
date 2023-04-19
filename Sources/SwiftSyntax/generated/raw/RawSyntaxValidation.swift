@@ -1787,17 +1787,23 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     assertNoError(kind, 1, verify(layout[1], as: RawTokenSyntax.self, tokenChoices: [.tokenKind(.identifier)]))
     assertNoError(kind, 2, verify(layout[2], as: RawUnexpectedNodesSyntax?.self))
   case .missingPattern:
-    assert(layout.count == 1)
+    assert(layout.count == 3)
     assertNoError(kind, 0, verify(layout[0], as: RawUnexpectedNodesSyntax?.self))
+    assertNoError(kind, 1, verify(layout[1], as: RawTokenSyntax.self, tokenChoices: [.tokenKind(.identifier)]))
+    assertNoError(kind, 2, verify(layout[2], as: RawUnexpectedNodesSyntax?.self))
   case .missingStmt:
-    assert(layout.count == 1)
+    assert(layout.count == 3)
     assertNoError(kind, 0, verify(layout[0], as: RawUnexpectedNodesSyntax?.self))
+    assertNoError(kind, 1, verify(layout[1], as: RawTokenSyntax.self, tokenChoices: [.tokenKind(.identifier)]))
+    assertNoError(kind, 2, verify(layout[2], as: RawUnexpectedNodesSyntax?.self))
   case .missing:
     assert(layout.count == 1)
     assertNoError(kind, 0, verify(layout[0], as: RawUnexpectedNodesSyntax?.self))
   case .missingType:
-    assert(layout.count == 1)
+    assert(layout.count == 3)
     assertNoError(kind, 0, verify(layout[0], as: RawUnexpectedNodesSyntax?.self))
+    assertNoError(kind, 1, verify(layout[1], as: RawTokenSyntax.self, tokenChoices: [.tokenKind(.identifier)]))
+    assertNoError(kind, 2, verify(layout[2], as: RawUnexpectedNodesSyntax?.self))
   case .modifierList:
     for (index, element) in layout.enumerated() {
       assertNoError(kind, index, verify(element, as: RawDeclModifierSyntax.self))

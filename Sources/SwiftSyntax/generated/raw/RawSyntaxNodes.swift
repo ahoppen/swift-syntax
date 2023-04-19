@@ -14111,17 +14111,32 @@ public struct RawMissingPatternSyntax: RawPatternSyntaxNodeProtocol {
     self.init(unchecked: other.raw)
   }
   
-  public init(_ unexpected: RawUnexpectedNodesSyntax? = nil, arena: __shared SyntaxArena) {
+  public init(
+      _ unexpectedBeforePlaceholder: RawUnexpectedNodesSyntax? = nil, 
+      placeholder: RawTokenSyntax, 
+      _ unexpectedAfterPlaceholder: RawUnexpectedNodesSyntax? = nil, 
+      arena: __shared SyntaxArena
+    ) {
     let raw = RawSyntax.makeLayout(
-      kind: .missingPattern, uninitializedCount: 1, arena: arena) { layout in 
+      kind: .missingPattern, uninitializedCount: 3, arena: arena) { layout in 
       layout.initialize(repeating: nil)
-      layout[0] = unexpected?.raw
+      layout[0] = unexpectedBeforePlaceholder?.raw
+      layout[1] = placeholder.raw
+      layout[2] = unexpectedAfterPlaceholder?.raw
     }
     self.init(unchecked: raw)
   }
   
-  public var unexpected: RawUnexpectedNodesSyntax? {
+  public var unexpectedBeforePlaceholder: RawUnexpectedNodesSyntax? {
     layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  
+  public var placeholder: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  
+  public var unexpectedAfterPlaceholder: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
   }
 }
 
@@ -14154,17 +14169,32 @@ public struct RawMissingStmtSyntax: RawStmtSyntaxNodeProtocol {
     self.init(unchecked: other.raw)
   }
   
-  public init(_ unexpected: RawUnexpectedNodesSyntax? = nil, arena: __shared SyntaxArena) {
+  public init(
+      _ unexpectedBeforePlaceholder: RawUnexpectedNodesSyntax? = nil, 
+      placeholder: RawTokenSyntax, 
+      _ unexpectedAfterPlaceholder: RawUnexpectedNodesSyntax? = nil, 
+      arena: __shared SyntaxArena
+    ) {
     let raw = RawSyntax.makeLayout(
-      kind: .missingStmt, uninitializedCount: 1, arena: arena) { layout in 
+      kind: .missingStmt, uninitializedCount: 3, arena: arena) { layout in 
       layout.initialize(repeating: nil)
-      layout[0] = unexpected?.raw
+      layout[0] = unexpectedBeforePlaceholder?.raw
+      layout[1] = placeholder.raw
+      layout[2] = unexpectedAfterPlaceholder?.raw
     }
     self.init(unchecked: raw)
   }
   
-  public var unexpected: RawUnexpectedNodesSyntax? {
+  public var unexpectedBeforePlaceholder: RawUnexpectedNodesSyntax? {
     layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  
+  public var placeholder: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  
+  public var unexpectedAfterPlaceholder: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
   }
 }
 
@@ -14240,17 +14270,32 @@ public struct RawMissingTypeSyntax: RawTypeSyntaxNodeProtocol {
     self.init(unchecked: other.raw)
   }
   
-  public init(_ unexpected: RawUnexpectedNodesSyntax? = nil, arena: __shared SyntaxArena) {
+  public init(
+      _ unexpectedBeforePlaceholder: RawUnexpectedNodesSyntax? = nil, 
+      placeholder: RawTokenSyntax, 
+      _ unexpectedAfterPlaceholder: RawUnexpectedNodesSyntax? = nil, 
+      arena: __shared SyntaxArena
+    ) {
     let raw = RawSyntax.makeLayout(
-      kind: .missingType, uninitializedCount: 1, arena: arena) { layout in 
+      kind: .missingType, uninitializedCount: 3, arena: arena) { layout in 
       layout.initialize(repeating: nil)
-      layout[0] = unexpected?.raw
+      layout[0] = unexpectedBeforePlaceholder?.raw
+      layout[1] = placeholder.raw
+      layout[2] = unexpectedAfterPlaceholder?.raw
     }
     self.init(unchecked: raw)
   }
   
-  public var unexpected: RawUnexpectedNodesSyntax? {
+  public var unexpectedBeforePlaceholder: RawUnexpectedNodesSyntax? {
     layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  
+  public var placeholder: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  
+  public var unexpectedAfterPlaceholder: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
   }
 }
 

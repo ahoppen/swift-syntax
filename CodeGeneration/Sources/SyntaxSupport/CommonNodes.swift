@@ -177,13 +177,25 @@ public let COMMON_NODES: [Node] = [
   Node(
     name: "MissingPattern",
     nameForDiagnostics: "pattern",
-    kind: "Pattern"
+    kind: "Pattern",
+    children: [
+      Child(
+        name: "Placeholder",
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false)
+      )
+    ]
   ),
 
   Node(
     name: "MissingStmt",
     nameForDiagnostics: "statement",
-    kind: "Stmt"
+    kind: "Stmt",
+    children: [
+      Child(
+        name: "Placeholder",
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false)
+      )
+    ]
   ),
 
   Node(
@@ -195,7 +207,13 @@ public let COMMON_NODES: [Node] = [
   Node(
     name: "MissingType",
     nameForDiagnostics: "type",
-    kind: "Type"
+    kind: "Type",
+    children: [
+      Child(
+        name: "Placeholder",
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false)
+      )
+    ]
   ),
 
   Node(

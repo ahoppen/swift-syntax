@@ -2134,14 +2134,26 @@ internal func childName(_ keyPath: AnyKeyPath) -> String? {
     return "placeholder"
   case \MissingExprSyntax.unexpectedAfterPlaceholder:
     return "unexpectedAfterPlaceholder"
-  case \MissingPatternSyntax.unexpected:
-    return "unexpected"
-  case \MissingStmtSyntax.unexpected:
-    return "unexpected"
+  case \MissingPatternSyntax.unexpectedBeforePlaceholder:
+    return "unexpectedBeforePlaceholder"
+  case \MissingPatternSyntax.placeholder:
+    return "placeholder"
+  case \MissingPatternSyntax.unexpectedAfterPlaceholder:
+    return "unexpectedAfterPlaceholder"
+  case \MissingStmtSyntax.unexpectedBeforePlaceholder:
+    return "unexpectedBeforePlaceholder"
+  case \MissingStmtSyntax.placeholder:
+    return "placeholder"
+  case \MissingStmtSyntax.unexpectedAfterPlaceholder:
+    return "unexpectedAfterPlaceholder"
   case \MissingSyntax.unexpected:
     return "unexpected"
-  case \MissingTypeSyntax.unexpected:
-    return "unexpected"
+  case \MissingTypeSyntax.unexpectedBeforePlaceholder:
+    return "unexpectedBeforePlaceholder"
+  case \MissingTypeSyntax.placeholder:
+    return "placeholder"
+  case \MissingTypeSyntax.unexpectedAfterPlaceholder:
+    return "unexpectedAfterPlaceholder"
   case \MoveExprSyntax.unexpectedBeforeMoveKeyword:
     return "unexpectedBeforeMoveKeyword"
   case \MoveExprSyntax.moveKeyword:

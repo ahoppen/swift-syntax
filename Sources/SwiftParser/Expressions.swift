@@ -126,6 +126,35 @@ extension RawMissingExprSyntax {
   }
 }
 
+extension RawMissingPatternSyntax {
+  public init(arena: __shared SyntaxArena) {
+    self.init(
+      placeholder: RawTokenSyntax(missing: .identifier, text: "<#pattern#>", arena: arena),
+      arena: arena
+    )
+  }
+}
+
+extension RawMissingStmtSyntax {
+  public init(arena: __shared SyntaxArena) {
+    self.init(
+      placeholder: RawTokenSyntax(missing: .identifier, text: "<#statement#>", arena: arena),
+      arena: arena
+    )
+  }
+}
+
+extension RawMissingTypeSyntax {
+  public init(arena: __shared SyntaxArena) {
+    self.init(
+      placeholder: RawTokenSyntax(missing: .identifier, text: "<#type#>", arena: arena),
+      arena: arena
+    )
+  }
+}
+
+
+
 extension Parser {
   /// Parse a sequence of expressions.
   ///

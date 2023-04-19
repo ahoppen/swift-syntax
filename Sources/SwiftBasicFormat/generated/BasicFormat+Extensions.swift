@@ -247,6 +247,12 @@ fileprivate extension AnyKeyPath {
       return true
     case \MissingExprSyntax.placeholder:
       return false
+    case \MissingPatternSyntax.placeholder:
+      return false
+    case \MissingStmtSyntax.placeholder:
+      return false
+    case \MissingTypeSyntax.placeholder:
+      return false
     default:
       return nil
     }
@@ -265,6 +271,12 @@ fileprivate extension AnyKeyPath {
     case \DynamicReplacementArgumentsSyntax.forLabel:
       return false
     case \MissingExprSyntax.placeholder:
+      return false
+    case \MissingPatternSyntax.placeholder:
+      return false
+    case \MissingStmtSyntax.placeholder:
+      return false
+    case \MissingTypeSyntax.placeholder:
       return false
     case \SwitchCaseLabelSyntax.colon:
       return false
