@@ -173,7 +173,7 @@ public class ClassificationTests: XCTestCase {
       XCTAssertEqual(classif[9].kind, .integerLiteral)
       XCTAssertEqual(classif[9].range, ByteSourceRange(offset: 21, length: 1))
       XCTAssertEqual(classif[10].kind, .none)
-      XCTAssertEqual(classif[10].range, ByteSourceRange(offset: 10, length: 0))
+      XCTAssertEqual(classif[10].range, ByteSourceRange(offset: 22, length: 0))
     }
 
     do {
@@ -181,8 +181,8 @@ public class ClassificationTests: XCTestCase {
       let tree = Parser.parse(source: source)
 
       let tokens = Array(tree.tokens(viewMode: .sourceAccurate))
-      XCTAssertEqual(tokens.count, 3)
-      guard tokens.count == 3 else {
+      XCTAssertEqual(tokens.count, 4)
+      guard tokens.count == 4 else {
         return
       }
       let classif = tokens.map { $0.tokenClassification }
@@ -192,6 +192,8 @@ public class ClassificationTests: XCTestCase {
       XCTAssertEqual(classif[1].range, ByteSourceRange(offset: 6, length: 8))
       XCTAssertEqual(classif[2].kind, .operatorIdentifier)
       XCTAssertEqual(classif[2].range, ByteSourceRange(offset: 15, length: 4))
+      XCTAssertEqual(classif[3].kind, .none)
+      XCTAssertEqual(classif[3].range, ByteSourceRange(offset: 19, length: 0))
     }
   }
 }

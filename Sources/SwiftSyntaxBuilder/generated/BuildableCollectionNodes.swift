@@ -178,8 +178,8 @@ extension EnumCaseParameterListSyntax: ExpressibleByArrayLiteral {
 /// A list of expressions connected by operators. This list is contained by a `SequenceExprSyntax`.
 extension ExprListSyntax: ExpressibleByArrayLiteral {
   public init(_ elements: [ExprSyntaxProtocol]) {
-    self = ExprListSyntax(elements.map { 
-        ExprSyntax(fromProtocol: $0) 
+    self = ExprListSyntax(elements.map {
+        ExprSyntax(fromProtocol: $0)
       })
   }
   
@@ -338,8 +338,8 @@ extension TupleTypeElementListSyntax: ExpressibleByArrayLiteral {
 /// A collection of syntax nodes that occurred in the source code but could not be used to form a valid syntax tree.
 extension UnexpectedNodesSyntax: ExpressibleByArrayLiteral {
   public init(_ elements: [SyntaxProtocol]) {
-    self = UnexpectedNodesSyntax(elements.map { 
-        Syntax(fromProtocol: $0) 
+    self = UnexpectedNodesSyntax(elements.map {
+        Syntax(fromProtocol: $0)
       })
   }
   

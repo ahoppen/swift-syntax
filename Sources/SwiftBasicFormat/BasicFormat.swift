@@ -18,11 +18,14 @@ open class BasicFormat: SyntaxRewriter {
 
   /// As we reach a new indendation level, its indentation will be added to the
   /// stack. As we exit that indentation level, the indendation will be popped.
-  public var indentationStack: [Trivia]
+  /// `isUserDefined` is `true` if the indentation was inferred from something
+  /// the user provided manually instead of being inferred from the nesting
+  /// level.
+  public var indentationStack: [(indentation: Trivia, isUserDefined: Bool)]
 
   /// The trivia by which tokens should currently be indented.
   public var currentIndentationLevel: Trivia {
-    return indentationStack.last!
+    return indentationStack.last!.indentation
   }
 
   /// For every token that is being put on a new line but did not have
@@ -39,17 +42,17 @@ open class BasicFormat: SyntaxRewriter {
     viewMode: SyntaxTreeViewMode = .sourceAccurate
   ) {
     self.indentationIncrement = indentationIncrement
-    self.indentationStack = [initialIndentation]
+    self.indentationStack = [(indentation: initialIndentation, isUserDefined: false)]
     self.viewMode = viewMode
   }
 
   // MARK: - Updating indentation level
 
-  public func pushIndentationLevel(increasingIndentationBy: Trivia) {
-    indentationStack.append(currentIndentationLevel + increasingIndentationBy)
+  public func increaseIndentationLevel() {
+    indentationStack.append((currentIndentationLevel + indentationIncrement, false))
   }
 
-  public func popIndentationLevel() {
+  public func decreaseIndentationLevel() {
     indentationStack.removeLast()
   }
 
@@ -60,16 +63,17 @@ open class BasicFormat: SyntaxRewriter {
         !tokenIndentation.isEmpty
       {
         // If the first token in this block is indented, infer the indentation level from it.
-        pushIndentationLevel(increasingIndentationBy: tokenIndentation)
+        let lastNonUserDefinedIndentation = indentationStack.last(where: { !$0.isUserDefined })!.indentation
+        indentationStack.append((indentation: lastNonUserDefinedIndentation + tokenIndentation, isUserDefined: true))
       } else {
-        pushIndentationLevel(increasingIndentationBy: indentationIncrement)
+        increaseIndentationLevel()
       }
     }
   }
 
   open override func visitPost(_ node: Syntax) {
     if requiresIndent(node) {
-      popIndentationLevel()
+      decreaseIndentationLevel()
     }
   }
 
@@ -196,6 +200,12 @@ open class BasicFormat: SyntaxRewriter {
       (.keyword(.subscript), .leftParen),  // subscript(x: Int)
       (.keyword(.super), .period),  // super.someProperty
       (.poundUnavailableKeyword, .leftParen),  // #unavailable(...)
+      (.identifier, .leftSquareBracket),  // myArray[1]
+      (.rightSquareBracket, .period),  // myArray[1].someProperty
+      (.keyword(.`init`), .leftAngle),  // init<T>()
+      (.keyword(.set), .leftParen),  // var mYar: Int { set(value) {} }
+      (.postfixQuestionMark, .leftAngle),  // init?<T>()
+      (.rightParen, .leftParen),  // returnsClosure()()
       (.postfixQuestionMark, .period):  // someOptional?.someProperty
       return false
     default:
@@ -247,7 +257,25 @@ open class BasicFormat: SyntaxRewriter {
         // don't add a leading newline to the file.
         return true
       }
-      return previousToken.trailingTrivia.pieces.last?.isNewline ?? false
+      if previousToken.trailingTrivia.pieces.last?.isNewline ?? false {
+        return true
+      }
+      if case .stringSegment(let segment) = previousToken.tokenKind, segment.last?.isNewline ?? false {
+        return true
+      }
+      return false
+    }()
+
+    lazy var previousTokenIsStringLiteralEndingInNewline: Bool = {
+      guard let previousToken = token.previousToken(viewMode: viewMode) else {
+        // Assume that the start of the tree is equivalent to a newline so we
+        // don't add a leading newline to the file.
+        return true
+      }
+      if case .stringSegment(let segment) = previousToken.tokenKind, segment.last?.isNewline ?? false {
+        return true
+      }
+      return false
     }()
 
     lazy var nextTokenWillStartWithBlank: Bool = {
@@ -328,7 +356,7 @@ open class BasicFormat: SyntaxRewriter {
       trailingTriviaIndentation = anchorPointIndentation
     }
 
-    leadingTrivia = leadingTrivia.indented(indentation: leadingTriviaIndentation, isOnNewline: false)
+    leadingTrivia = leadingTrivia.indented(indentation: leadingTriviaIndentation, isOnNewline: previousTokenIsStringLiteralEndingInNewline)
     trailingTrivia = trailingTrivia.indented(indentation: trailingTriviaIndentation, isOnNewline: false)
 
     leadingTrivia = leadingTrivia.trimingTrailingBlanksBeforeNewline(isBeforeNewline: false)

@@ -188,8 +188,8 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     }
   }
   func assertAnyHasNoError(_ nodeKind: SyntaxKind, _ index: Int, _ errors: [ValidationError?]) {
-    let nonNilErrors = errors.compactMap({ 
-        $0 
+    let nonNilErrors = errors.compactMap({
+        $0
       })
     if nonNilErrors.count == errors.count, let firstError = nonNilErrors.first {
       let (file, line) = firstError.fileAndLine
@@ -369,7 +369,7 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
   case .attributeList:
     for (index, element) in layout.enumerated() {
       assertAnyHasNoError(kind, index, [
-          verify(element, as: RawAttributeSyntax.self), 
+          verify(element, as: RawAttributeSyntax.self),
           verify(element, as: RawIfConfigDeclSyntax.self)])
     }
   case .attribute:
@@ -2038,8 +2038,8 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
   case .precedenceGroupAttributeList:
     for (index, element) in layout.enumerated() {
       assertAnyHasNoError(kind, index, [
-          verify(element, as: RawPrecedenceGroupRelationSyntax.self), 
-          verify(element, as: RawPrecedenceGroupAssignmentSyntax.self), 
+          verify(element, as: RawPrecedenceGroupRelationSyntax.self),
+          verify(element, as: RawPrecedenceGroupAssignmentSyntax.self),
           verify(element, as: RawPrecedenceGroupAssociativitySyntax.self)])
     }
   case .precedenceGroupDecl:
@@ -2211,9 +2211,9 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
   case .specializeAttributeSpecList:
     for (index, element) in layout.enumerated() {
       assertAnyHasNoError(kind, index, [
-            verify(element, as: RawLabeledSpecializeEntrySyntax.self), 
-            verify(element, as: RawAvailabilityEntrySyntax.self), 
-            verify(element, as: RawTargetFunctionEntrySyntax.self), 
+            verify(element, as: RawLabeledSpecializeEntrySyntax.self),
+            verify(element, as: RawAvailabilityEntrySyntax.self),
+            verify(element, as: RawTargetFunctionEntrySyntax.self),
             verify(element, as: RawGenericWhereClauseSyntax.self)
           ])
     }
@@ -2240,7 +2240,7 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
   case .stringLiteralSegments:
     for (index, element) in layout.enumerated() {
       assertAnyHasNoError(kind, index, [
-          verify(element, as: RawStringSegmentSyntax.self), 
+          verify(element, as: RawStringSegmentSyntax.self),
           verify(element, as: RawExpressionSegmentSyntax.self)])
     }
   case .stringSegment:
@@ -2319,7 +2319,7 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
   case .switchCaseList:
     for (index, element) in layout.enumerated() {
       assertAnyHasNoError(kind, index, [
-          verify(element, as: RawSwitchCaseSyntax.self), 
+          verify(element, as: RawSwitchCaseSyntax.self),
           verify(element, as: RawIfConfigDeclSyntax.self)])
     }
   case .switchCase:
@@ -2653,5 +2653,5 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
         verify(layout[3], as: RawSyntax.self)])
     assertNoError(kind, 4, verify(layout[4], as: RawUnexpectedNodesSyntax?.self))
   }
-  #endif 
+  #endif
 }
