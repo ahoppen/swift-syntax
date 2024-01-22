@@ -64,6 +64,39 @@ extension AccessorDeclSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.get):
+        self = .get
+      case TokenSpec(.set):
+        self = .set
+      case TokenSpec(.didSet):
+        self = .didSet
+      case TokenSpec(.willSet):
+        self = .willSet
+      case TokenSpec(.unsafeAddress):
+        self = .unsafeAddress
+      case TokenSpec(.addressWithOwner):
+        self = .addressWithOwner
+      case TokenSpec(.addressWithNativeOwner):
+        self = .addressWithNativeOwner
+      case TokenSpec(.unsafeMutableAddress):
+        self = .unsafeMutableAddress
+      case TokenSpec(.mutableAddressWithOwner):
+        self = .mutableAddressWithOwner
+      case TokenSpec(.mutableAddressWithNativeOwner):
+        self = .mutableAddressWithNativeOwner
+      case TokenSpec(._read):
+        self = ._read
+      case TokenSpec(._modify):
+        self = ._modify
+      case TokenSpec(.`init`):
+        self = .`init`
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .get:
@@ -149,6 +182,17 @@ extension AsExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.postfixQuestionMark):
+        self = .postfixQuestionMark
+      case TokenSpec(.exclamationMark):
+        self = .exclamationMark
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .postfixQuestionMark:
@@ -181,6 +225,17 @@ extension AvailabilityConditionSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.poundAvailable):
+        self = .poundAvailable
+      case TokenSpec(.poundUnavailable):
+        self = .poundUnavailable
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.poundAvailable):
         self = .poundAvailable
       case TokenSpec(.poundUnavailable):
@@ -225,6 +280,23 @@ extension AvailabilityLabeledArgumentSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.message):
+        self = .message
+      case TokenSpec(.renamed):
+        self = .renamed
+      case TokenSpec(.introduced):
+        self = .introduced
+      case TokenSpec(.obsoleted):
+        self = .obsoleted
+      case TokenSpec(.deprecated):
+        self = .deprecated
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.message):
         self = .message
       case TokenSpec(.renamed):
@@ -293,6 +365,17 @@ extension BooleanLiteralExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.true):
+        self = .true
+      case TokenSpec(.false):
+        self = .false
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .true:
@@ -325,6 +408,17 @@ extension CanImportVersionInfoSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(._version):
+        self = ._version
+      case TokenSpec(._underlyingVersion):
+        self = ._underlyingVersion
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(._version):
         self = ._version
       case TokenSpec(._underlyingVersion):
@@ -375,6 +469,17 @@ extension ClosureCaptureSpecifierSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.weak):
+        self = .weak
+      case TokenSpec(.unowned):
+        self = .unowned
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .weak:
@@ -407,6 +512,17 @@ extension ClosureCaptureSpecifierSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.safe):
+        self = .safe
+      case TokenSpec(.unsafe):
+        self = .unsafe
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.safe):
         self = .safe
       case TokenSpec(.unsafe):
@@ -457,6 +573,17 @@ extension ClosureParameterSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -489,6 +616,17 @@ extension ClosureParameterSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.wildcard):
@@ -539,6 +677,17 @@ extension ClosureShorthandParameterSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -571,6 +720,17 @@ extension ConsumeExprSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(._move):
+        self = ._move
+      case TokenSpec(.consume):
+        self = .consume
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(._move):
         self = ._move
       case TokenSpec(.consume):
@@ -718,6 +878,87 @@ extension DeclModifierSyntax {
       case TokenSpec(.static):
         self = .static
       case TokenSpec(.transferring) where experimentalFeatures.contains(.transferringArgsAndResults):
+        self = .transferring
+      case TokenSpec(.unowned):
+        self = .unowned
+      case TokenSpec(.weak):
+        self = .weak
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.__consuming):
+        self = .__consuming
+      case TokenSpec(.__setter_access):
+        self = .__setter_access
+      case TokenSpec(._const):
+        self = ._const
+      case TokenSpec(._local):
+        self = ._local
+      case TokenSpec(.actor):
+        self = .actor
+      case TokenSpec(.async):
+        self = .async
+      case TokenSpec(.borrowing):
+        self = .borrowing
+      case TokenSpec(.class):
+        self = .class
+      case TokenSpec(.consuming):
+        self = .consuming
+      case TokenSpec(.convenience):
+        self = .convenience
+      case TokenSpec(.distributed):
+        self = .distributed
+      case TokenSpec(.dynamic):
+        self = .dynamic
+      case TokenSpec(.fileprivate):
+        self = .fileprivate
+      case TokenSpec(.final):
+        self = .final
+      case TokenSpec(.indirect):
+        self = .indirect
+      case TokenSpec(.infix):
+        self = .infix
+      case TokenSpec(.internal):
+        self = .internal
+      case TokenSpec(.isolated):
+        self = .isolated
+      case TokenSpec(.lazy):
+        self = .lazy
+      case TokenSpec(.mutating):
+        self = .mutating
+      case TokenSpec(.nonisolated):
+        self = .nonisolated
+      case TokenSpec(.nonmutating):
+        self = .nonmutating
+      case TokenSpec(.open):
+        self = .open
+      case TokenSpec(.optional):
+        self = .optional
+      case TokenSpec(.override):
+        self = .override
+      case TokenSpec(.package):
+        self = .package
+      case TokenSpec(.postfix):
+        self = .postfix
+      case TokenSpec(.prefix):
+        self = .prefix
+      case TokenSpec(.private):
+        self = .private
+      case TokenSpec(.public):
+        self = .public
+      case TokenSpec(.reasync):
+        self = .reasync
+      case TokenSpec(._resultDependsOnSelf):
+        self = ._resultDependsOnSelf
+      case TokenSpec(.required):
+        self = .required
+      case TokenSpec(.static):
+        self = .static
+      case TokenSpec(.transferring):
         self = .transferring
       case TokenSpec(.unowned):
         self = .unowned
@@ -930,6 +1171,27 @@ extension DeclReferenceExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.self):
+        self = .self
+      case TokenSpec(.Self):
+        self = .Self
+      case TokenSpec(.`init`):
+        self = .`init`
+      case TokenSpec(.dollarIdentifier):
+        self = .dollarIdentifier
+      case TokenSpec(.binaryOperator):
+        self = .binaryOperator
+      case TokenSpec(.integerLiteral):
+        self = .integerLiteral
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -999,6 +1261,17 @@ extension DerivativeAttributeArgumentsSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.get):
+        self = .get
+      case TokenSpec(.set):
+        self = .set
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .get:
@@ -1032,6 +1305,19 @@ extension DifferentiabilityArgumentSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.integerLiteral):
+        self = .integerLiteral
+      case TokenSpec(.self):
+        self = .self
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.integerLiteral):
@@ -1091,6 +1377,19 @@ extension DifferentiableAttributeArgumentsSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(._forward):
+        self = ._forward
+      case TokenSpec(.reverse):
+        self = .reverse
+      case TokenSpec(._linear):
+        self = ._linear
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case ._forward:
@@ -1127,6 +1426,17 @@ extension DocumentationAttributeArgumentSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.visibility):
+        self = .visibility
+      case TokenSpec(.metadata):
+        self = .metadata
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.visibility):
         self = .visibility
       case TokenSpec(.metadata):
@@ -1177,6 +1487,17 @@ extension EnumCaseParameterSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -1209,6 +1530,17 @@ extension EnumCaseParameterSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.wildcard):
@@ -1252,6 +1584,21 @@ extension FunctionDeclSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.binaryOperator):
+        self = .binaryOperator
+      case TokenSpec(.prefixOperator):
+        self = .prefixOperator
+      case TokenSpec(.postfixOperator):
+        self = .postfixOperator
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.binaryOperator):
@@ -1314,6 +1661,17 @@ extension FunctionEffectSpecifiersSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.async):
+        self = .async
+      case TokenSpec(.reasync):
+        self = .reasync
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .async:
@@ -1355,6 +1713,17 @@ extension FunctionParameterSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -1387,6 +1756,17 @@ extension FunctionParameterSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.wildcard):
@@ -1446,6 +1826,19 @@ extension IdentifierPatternSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.self):
+        self = .self
+      case TokenSpec(.`init`):
+        self = .`init`
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -1492,6 +1885,21 @@ extension IdentifierTypeSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.Self):
+        self = .Self
+      case TokenSpec(.Any):
+        self = .Any
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.Self):
@@ -1557,6 +1965,19 @@ extension IfConfigClauseSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.poundIf):
+        self = .poundIf
+      case TokenSpec(.poundElseif):
+        self = .poundElseif
+      case TokenSpec(.poundElse):
+        self = .poundElse
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .poundIf:
@@ -1600,6 +2021,31 @@ extension ImportDeclSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.typealias):
+        self = .typealias
+      case TokenSpec(.struct):
+        self = .struct
+      case TokenSpec(.class):
+        self = .class
+      case TokenSpec(.enum):
+        self = .enum
+      case TokenSpec(.protocol):
+        self = .protocol
+      case TokenSpec(.var):
+        self = .var
+      case TokenSpec(.let):
+        self = .let
+      case TokenSpec(.func):
+        self = .func
+      case TokenSpec(.inout):
+        self = .inout
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.typealias):
         self = .typealias
       case TokenSpec(.struct):
@@ -1698,6 +2144,21 @@ extension ImportPathComponentSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.binaryOperator):
+        self = .binaryOperator
+      case TokenSpec(.prefixOperator):
+        self = .prefixOperator
+      case TokenSpec(.postfixOperator):
+        self = .postfixOperator
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -1738,6 +2199,17 @@ extension InitializerDeclSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.postfixQuestionMark):
+        self = .postfixQuestionMark
+      case TokenSpec(.exclamationMark):
+        self = .exclamationMark
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.postfixQuestionMark):
         self = .postfixQuestionMark
       case TokenSpec(.exclamationMark):
@@ -1788,6 +2260,17 @@ extension KeyPathOptionalComponentSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.postfixQuestionMark):
+        self = .postfixQuestionMark
+      case TokenSpec(.exclamationMark):
+        self = .exclamationMark
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .postfixQuestionMark:
@@ -1820,6 +2303,17 @@ extension LabeledExprSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.wildcard):
@@ -1865,6 +2359,25 @@ extension LabeledSpecializeArgumentSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.target):
+        self = .target
+      case TokenSpec(.availability):
+        self = .availability
+      case TokenSpec(.exported):
+        self = .exported
+      case TokenSpec(.kind):
+        self = .kind
+      case TokenSpec(.spi):
+        self = .spi
+      case TokenSpec(.spiModule):
+        self = .spiModule
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.target):
         self = .target
       case TokenSpec(.availability):
@@ -1960,6 +2473,31 @@ extension LayoutRequirementSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(._Trivial):
+        self = ._Trivial
+      case TokenSpec(._TrivialAtMost):
+        self = ._TrivialAtMost
+      case TokenSpec(._UnknownLayout):
+        self = ._UnknownLayout
+      case TokenSpec(._RefCountedObject):
+        self = ._RefCountedObject
+      case TokenSpec(._NativeRefCountedObject):
+        self = ._NativeRefCountedObject
+      case TokenSpec(._Class):
+        self = ._Class
+      case TokenSpec(._NativeClass):
+        self = ._NativeClass
+      case TokenSpec(._BridgeObject):
+        self = ._BridgeObject
+      case TokenSpec(._TrivialStride):
+        self = ._TrivialStride
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case ._Trivial:
@@ -2029,6 +2567,17 @@ extension MemberTypeSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.self):
+        self = .self
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -2070,6 +2619,17 @@ extension MetatypeTypeSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.Type):
+        self = .Type
+      case TokenSpec(.Protocol):
+        self = .Protocol
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .Type:
@@ -2102,6 +2662,17 @@ extension MultipleTrailingClosureElementSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.wildcard):
@@ -2155,6 +2726,19 @@ extension OperatorDeclSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.prefix):
+        self = .prefix
+      case TokenSpec(.postfix):
+        self = .postfix
+      case TokenSpec(.infix):
+        self = .infix
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .prefix:
@@ -2192,6 +2776,19 @@ extension OperatorDeclSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.binaryOperator):
+        self = .binaryOperator
+      case TokenSpec(.prefixOperator):
+        self = .prefixOperator
+      case TokenSpec(.postfixOperator):
+        self = .postfixOperator
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.binaryOperator):
         self = .binaryOperator
       case TokenSpec(.prefixOperator):
@@ -2263,6 +2860,25 @@ extension OptionalBindingConditionSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.let):
+        self = .let
+      case TokenSpec(.var):
+        self = .var
+      case TokenSpec(.inout):
+        self = .inout
+      case TokenSpec(._mutating):
+        self = ._mutating
+      case TokenSpec(._borrowing):
+        self = ._borrowing
+      case TokenSpec(._consuming):
+        self = ._consuming
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .let:
@@ -2320,6 +2936,17 @@ extension PrecedenceGroupAssignmentSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.true):
+        self = .true
+      case TokenSpec(.false):
+        self = .false
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .true:
@@ -2353,6 +2980,19 @@ extension PrecedenceGroupAssociativitySyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.left):
+        self = .left
+      case TokenSpec(.right):
+        self = .right
+      case TokenSpec(.none):
+        self = .none
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.left):
         self = .left
       case TokenSpec(.right):
@@ -2409,6 +3049,17 @@ extension PrecedenceGroupRelationSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.higherThan):
+        self = .higherThan
+      case TokenSpec(.lowerThan):
+        self = .lowerThan
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .higherThan:
@@ -2442,6 +3093,19 @@ extension SameTypeRequirementSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.binaryOperator):
+        self = .binaryOperator
+      case TokenSpec(.prefixOperator):
+        self = .prefixOperator
+      case TokenSpec(.postfixOperator):
+        self = .postfixOperator
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.binaryOperator):
         self = .binaryOperator
       case TokenSpec(.prefixOperator):
@@ -2498,6 +3162,17 @@ extension SimpleStringLiteralExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.stringQuote):
+        self = .stringQuote
+      case TokenSpec(.multilineStringQuote):
+        self = .multilineStringQuote
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .stringQuote:
@@ -2539,6 +3214,17 @@ extension SimpleStringLiteralExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.stringQuote):
+        self = .stringQuote
+      case TokenSpec(.multilineStringQuote):
+        self = .multilineStringQuote
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .stringQuote:
@@ -2571,6 +3257,17 @@ extension SomeOrAnyTypeSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.some):
+        self = .some
+      case TokenSpec(.any):
+        self = .any
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.some):
         self = .some
       case TokenSpec(.any):
@@ -2624,6 +3321,19 @@ extension StringLiteralExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.stringQuote):
+        self = .stringQuote
+      case TokenSpec(.multilineStringQuote):
+        self = .multilineStringQuote
+      case TokenSpec(.singleQuote):
+        self = .singleQuote
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .stringQuote:
@@ -2661,6 +3371,19 @@ extension StringLiteralExprSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.stringQuote):
+        self = .stringQuote
+      case TokenSpec(.multilineStringQuote):
+        self = .multilineStringQuote
+      case TokenSpec(.singleQuote):
+        self = .singleQuote
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.stringQuote):
         self = .stringQuote
       case TokenSpec(.multilineStringQuote):
@@ -2717,6 +3440,17 @@ extension ThrowsClauseSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.throws):
+        self = .throws
+      case TokenSpec(.rethrows):
+        self = .rethrows
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .throws:
@@ -2749,6 +3483,17 @@ extension TryExprSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.postfixQuestionMark):
+        self = .postfixQuestionMark
+      case TokenSpec(.exclamationMark):
+        self = .exclamationMark
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.postfixQuestionMark):
         self = .postfixQuestionMark
       case TokenSpec(.exclamationMark):
@@ -2799,6 +3544,17 @@ extension TupleTypeElementSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .identifier:
@@ -2831,6 +3587,17 @@ extension TupleTypeElementSyntax {
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
       case TokenSpec(.identifier):
         self = .identifier
       case TokenSpec(.wildcard):
@@ -2898,6 +3665,31 @@ extension TypeSpecifierSyntax {
       case TokenSpec(.transferring) where experimentalFeatures.contains(.transferringArgsAndResults):
         self = .transferring
       case TokenSpec(._resultDependsOn) where experimentalFeatures.contains(.nonescapableTypes):
+        self = ._resultDependsOn
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.inout):
+        self = .inout
+      case TokenSpec(.__shared):
+        self = .__shared
+      case TokenSpec(.__owned):
+        self = .__owned
+      case TokenSpec(.isolated):
+        self = .isolated
+      case TokenSpec(._const):
+        self = ._const
+      case TokenSpec(.borrowing):
+        self = .borrowing
+      case TokenSpec(.consuming):
+        self = .consuming
+      case TokenSpec(.transferring):
+        self = .transferring
+      case TokenSpec(._resultDependsOn):
         self = ._resultDependsOn
       default:
         return nil
@@ -2973,6 +3765,17 @@ extension UnresolvedAsExprSyntax {
       }
     }
     
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.postfixQuestionMark):
+        self = .postfixQuestionMark
+      case TokenSpec(.exclamationMark):
+        self = .exclamationMark
+      default:
+        return nil
+      }
+    }
+    
     var spec: TokenSpec {
       switch self {
       case .postfixQuestionMark:
@@ -3023,6 +3826,25 @@ extension ValueBindingPatternSyntax {
       case TokenSpec(._borrowing) where experimentalFeatures.contains(.referenceBindings) || experimentalFeatures.contains(.borrowingSwitch):
         self = ._borrowing
       case TokenSpec(._consuming) where experimentalFeatures.contains(.referenceBindings):
+        self = ._consuming
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.let):
+        self = .let
+      case TokenSpec(.var):
+        self = .var
+      case TokenSpec(.inout):
+        self = .inout
+      case TokenSpec(._mutating):
+        self = ._mutating
+      case TokenSpec(._borrowing):
+        self = ._borrowing
+      case TokenSpec(._consuming):
         self = ._consuming
       default:
         return nil
@@ -3095,6 +3917,25 @@ extension VariableDeclSyntax {
       case TokenSpec(._borrowing) where experimentalFeatures.contains(.referenceBindings) || experimentalFeatures.contains(.borrowingSwitch):
         self = ._borrowing
       case TokenSpec(._consuming) where experimentalFeatures.contains(.referenceBindings):
+        self = ._consuming
+      default:
+        return nil
+      }
+    }
+    
+    public init?(token: TokenSyntax) {
+      switch token {
+      case TokenSpec(.let):
+        self = .let
+      case TokenSpec(.var):
+        self = .var
+      case TokenSpec(.inout):
+        self = .inout
+      case TokenSpec(._mutating):
+        self = ._mutating
+      case TokenSpec(._borrowing):
+        self = ._borrowing
+      case TokenSpec(._consuming):
         self = ._consuming
       default:
         return nil
