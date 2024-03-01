@@ -209,3 +209,14 @@ extension TokenSyntax {
     return presence == .present
   }
 }
+
+extension TypeSpecifierListSyntax {
+  var simpleSpecifiers: [TokenSyntax] {
+    return self.compactMap { specifier in
+      switch specifier {
+      case .simpleTypeSpecifier(let specifier): return specifier.specifier
+      case .lifetimeTypeSpecifier: return nil
+      }
+    }
+  }
+}

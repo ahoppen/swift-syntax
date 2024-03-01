@@ -178,6 +178,10 @@ public enum SyntaxEnum: Sendable {
   case labeledSpecializeArgument(LabeledSpecializeArgumentSyntax)
   case labeledStmt(LabeledStmtSyntax)
   case layoutRequirement(LayoutRequirementSyntax)
+  case lifetimeSpecifierArgumentList(LifetimeSpecifierArgumentListSyntax)
+  case lifetimeSpecifierArgument(LifetimeSpecifierArgumentSyntax)
+  case lifetimeSpecifierArguments(LifetimeSpecifierArgumentsSyntax)
+  case lifetimeTypeSpecifier(LifetimeTypeSpecifierSyntax)
   case macroDecl(MacroDeclSyntax)
   case macroExpansionDecl(MacroExpansionDeclSyntax)
   case macroExpansionExpr(MacroExpansionExprSyntax)
@@ -241,6 +245,7 @@ public enum SyntaxEnum: Sendable {
   case sequenceExpr(SequenceExprSyntax)
   case simpleStringLiteralExpr(SimpleStringLiteralExprSyntax)
   case simpleStringLiteralSegmentList(SimpleStringLiteralSegmentListSyntax)
+  case simpleTypeSpecifier(SimpleTypeSpecifierSyntax)
   case someOrAnyType(SomeOrAnyTypeSyntax)
   case sourceFile(SourceFileSyntax)
   case specializeAttributeArgumentList(SpecializeAttributeArgumentListSyntax)
@@ -282,7 +287,6 @@ public enum SyntaxEnum: Sendable {
   case typeExpr(TypeExprSyntax)
   case typeInitializerClause(TypeInitializerClauseSyntax)
   case typeSpecifierList(TypeSpecifierListSyntax)
-  case typeSpecifier(TypeSpecifierSyntax)
   case unavailableFromAsyncAttributeArguments(UnavailableFromAsyncAttributeArgumentsSyntax)
   case underscorePrivateAttributeArguments(UnderscorePrivateAttributeArgumentsSyntax)
   case unexpectedNodes(UnexpectedNodesSyntax)
@@ -629,6 +633,14 @@ public extension Syntax {
       return .labeledStmt(LabeledStmtSyntax(self)!)
     case .layoutRequirement:
       return .layoutRequirement(LayoutRequirementSyntax(self)!)
+    case .lifetimeSpecifierArgumentList:
+      return .lifetimeSpecifierArgumentList(LifetimeSpecifierArgumentListSyntax(self)!)
+    case .lifetimeSpecifierArgument:
+      return .lifetimeSpecifierArgument(LifetimeSpecifierArgumentSyntax(self)!)
+    case .lifetimeSpecifierArguments:
+      return .lifetimeSpecifierArguments(LifetimeSpecifierArgumentsSyntax(self)!)
+    case .lifetimeTypeSpecifier:
+      return .lifetimeTypeSpecifier(LifetimeTypeSpecifierSyntax(self)!)
     case .macroDecl:
       return .macroDecl(MacroDeclSyntax(self)!)
     case .macroExpansionDecl:
@@ -755,6 +767,8 @@ public extension Syntax {
       return .simpleStringLiteralExpr(SimpleStringLiteralExprSyntax(self)!)
     case .simpleStringLiteralSegmentList:
       return .simpleStringLiteralSegmentList(SimpleStringLiteralSegmentListSyntax(self)!)
+    case .simpleTypeSpecifier:
+      return .simpleTypeSpecifier(SimpleTypeSpecifierSyntax(self)!)
     case .someOrAnyType:
       return .someOrAnyType(SomeOrAnyTypeSyntax(self)!)
     case .sourceFile:
@@ -831,8 +845,6 @@ public extension Syntax {
       return .typeInitializerClause(TypeInitializerClauseSyntax(self)!)
     case .typeSpecifierList:
       return .typeSpecifierList(TypeSpecifierListSyntax(self)!)
-    case .typeSpecifier:
-      return .typeSpecifier(TypeSpecifierSyntax(self)!)
     case .unavailableFromAsyncAttributeArguments:
       return .unavailableFromAsyncAttributeArguments(UnavailableFromAsyncAttributeArgumentsSyntax(self)!)
     case .underscorePrivateAttributeArguments:

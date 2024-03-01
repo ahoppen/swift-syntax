@@ -265,6 +265,8 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/KeyPathComponentSyntax>
 - <doc:SwiftSyntax/LabeledExprListSyntax>
 - <doc:SwiftSyntax/LabeledExprSyntax>
+- <doc:SwiftSyntax/LifetimeSpecifierArgumentListSyntax>
+- <doc:SwiftSyntax/LifetimeSpecifierArgumentSyntax>
 - <doc:SwiftSyntax/MemberBlockItemListSyntax>
 - <doc:SwiftSyntax/MemberBlockItemSyntax>
 - <doc:SwiftSyntax/MultipleTrailingClosureElementListSyntax>
@@ -302,7 +304,8 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/TupleTypeElementListSyntax>
 - <doc:SwiftSyntax/TupleTypeElementSyntax>
 - <doc:SwiftSyntax/TypeSpecifierListSyntax>
-- <doc:SwiftSyntax/TypeSpecifierSyntax>
+- <doc:SwiftSyntax/SimpleTypeSpecifierSyntax>
+- <doc:SwiftSyntax/LifetimeTypeSpecifierSyntax>
 - <doc:SwiftSyntax/UnexpectedNodesSyntax>
 - <doc:SwiftSyntax/VersionComponentListSyntax>
 - <doc:SwiftSyntax/VersionComponentSyntax>
@@ -369,6 +372,7 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/KeyPathPropertyComponentSyntax>
 - <doc:SwiftSyntax/KeyPathSubscriptComponentSyntax>
 - <doc:SwiftSyntax/LayoutRequirementSyntax>
+- <doc:SwiftSyntax/LifetimeSpecifierArgumentsSyntax>
 - <doc:SwiftSyntax/MatchingPatternConditionSyntax>
 - <doc:SwiftSyntax/MemberBlockSyntax>
 - <doc:SwiftSyntax/MissingSyntax>

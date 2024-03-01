@@ -878,6 +878,28 @@ public struct LabeledExprListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
+/// ``LifetimeSpecifierArgumentSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``LifetimeSpecifierArgumentsSyntax``.``LifetimeSpecifierArgumentsSyntax/arguments``
+public struct LifetimeSpecifierArgumentListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = LifetimeSpecifierArgumentSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .lifetimeSpecifierArgumentList else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  public static let syntaxKind = SyntaxKind.lifetimeSpecifierArgumentList
+}
+
+/// ### Children
+/// 
 /// ``MemberBlockItemSyntax`` `*`
 ///
 /// ### Contained in
@@ -1652,13 +1674,95 @@ public struct TupleTypeElementListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``TypeSpecifierSyntax`` `*`
+/// (``SimpleTypeSpecifierSyntax`` | ``LifetimeTypeSpecifierSyntax``) `*`
 ///
 /// ### Contained in
 /// 
 ///  - ``AttributedTypeSyntax``.``AttributedTypeSyntax/specifiers``
 public struct TypeSpecifierListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = TypeSpecifierSyntax
+  public enum Element: SyntaxChildChoices, SyntaxHashable {
+    case `simpleTypeSpecifier`(SimpleTypeSpecifierSyntax)
+    case `lifetimeTypeSpecifier`(LifetimeTypeSpecifierSyntax)
+    
+    public var _syntaxNode: Syntax {
+      switch self {
+      case .simpleTypeSpecifier(let node):
+        return node._syntaxNode
+      case .lifetimeTypeSpecifier(let node):
+        return node._syntaxNode
+      }
+    }
+    
+    public init(_ node: SimpleTypeSpecifierSyntax) {
+      self = .simpleTypeSpecifier(node)
+    }
+    
+    public init(_ node: LifetimeTypeSpecifierSyntax) {
+      self = .lifetimeTypeSpecifier(node)
+    }
+    
+    public init?(_ node: some SyntaxProtocol) {
+      if let node = node.as(SimpleTypeSpecifierSyntax.self) {
+        self = .simpleTypeSpecifier(node)
+        return
+      }
+      if let node = node.as(LifetimeTypeSpecifierSyntax.self) {
+        self = .lifetimeTypeSpecifier(node)
+        return
+      }
+      return nil
+    }
+    
+    public static var structure: SyntaxNodeStructure {
+      return .choices([
+          .node(SimpleTypeSpecifierSyntax.self),
+          .node(LifetimeTypeSpecifierSyntax.self)])
+    }
+    
+    /// Checks if the current syntax node can be cast to ``SimpleTypeSpecifierSyntax``.
+    ///
+    /// - Returns: `true` if the node can be cast, `false` otherwise.
+    public func `is`(_ syntaxType: SimpleTypeSpecifierSyntax.Type) -> Bool {
+      return self.as(syntaxType) != nil
+    }
+    
+    /// Attempts to cast the current syntax node to ``SimpleTypeSpecifierSyntax``.
+    ///
+    /// - Returns: An instance of ``SimpleTypeSpecifierSyntax``, or `nil` if the cast fails.
+    public func `as`(_ syntaxType: SimpleTypeSpecifierSyntax.Type) -> SimpleTypeSpecifierSyntax? {
+      return SimpleTypeSpecifierSyntax.init(self)
+    }
+    
+    /// Force-casts the current syntax node to ``SimpleTypeSpecifierSyntax``.
+    ///
+    /// - Returns: An instance of ``SimpleTypeSpecifierSyntax``.
+    /// - Warning: This function will crash if the cast is not possible. Use `as` to safely attempt a cast.
+    public func cast(_ syntaxType: SimpleTypeSpecifierSyntax.Type) -> SimpleTypeSpecifierSyntax {
+      return self.as(SimpleTypeSpecifierSyntax.self)!
+    }
+    
+    /// Checks if the current syntax node can be cast to ``LifetimeTypeSpecifierSyntax``.
+    ///
+    /// - Returns: `true` if the node can be cast, `false` otherwise.
+    public func `is`(_ syntaxType: LifetimeTypeSpecifierSyntax.Type) -> Bool {
+      return self.as(syntaxType) != nil
+    }
+    
+    /// Attempts to cast the current syntax node to ``LifetimeTypeSpecifierSyntax``.
+    ///
+    /// - Returns: An instance of ``LifetimeTypeSpecifierSyntax``, or `nil` if the cast fails.
+    public func `as`(_ syntaxType: LifetimeTypeSpecifierSyntax.Type) -> LifetimeTypeSpecifierSyntax? {
+      return LifetimeTypeSpecifierSyntax.init(self)
+    }
+    
+    /// Force-casts the current syntax node to ``LifetimeTypeSpecifierSyntax``.
+    ///
+    /// - Returns: An instance of ``LifetimeTypeSpecifierSyntax``.
+    /// - Warning: This function will crash if the cast is not possible. Use `as` to safely attempt a cast.
+    public func cast(_ syntaxType: LifetimeTypeSpecifierSyntax.Type) -> LifetimeTypeSpecifierSyntax {
+      return self.as(LifetimeTypeSpecifierSyntax.self)!
+    }
+  }
   
   public let _syntaxNode: Syntax
   
