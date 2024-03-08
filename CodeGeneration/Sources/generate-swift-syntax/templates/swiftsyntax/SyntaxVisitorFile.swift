@@ -106,7 +106,7 @@ let syntaxVisitorFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
         let needsChildren = (visit(node) == .visitChildren)
         // Avoid calling into visitChildren if possible.
         if needsChildren && !node.raw.layoutView!.children.isEmpty {
-          visitChildren(node)
+          visitChildren(Syntax(node))
         }
         visitPost(node)
       }
@@ -217,10 +217,10 @@ let syntaxVisitorFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
 
     DeclSyntax(
       """
-      private func visitChildren(_ node: some SyntaxProtocol) {
-        let syntaxNode = Syntax(node)
-        for childRaw in NonNilRawSyntaxChildren(syntaxNode, viewMode: viewMode) {
-          visit(Syntax(childRaw, parent: syntaxNode))
+      @inline(__always)
+      private func visitChildren(_ node: Syntax) {
+        for childRaw in NonNilRawSyntaxChildren(node, viewMode: viewMode) {
+          visit(Syntax(childRaw, parent: node))
         }
       }
       """

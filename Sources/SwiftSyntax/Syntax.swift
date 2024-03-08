@@ -14,9 +14,17 @@
 /// Each node has accessors for its known children, and allows efficient
 /// iteration over the children through its `children` property.
 public struct Syntax: SyntaxProtocol, SyntaxHashable {
-  fileprivate enum Info {
-    case root(Root)
-    indirect case nonRoot(NonRoot)
+  final class Info {
+    enum InfoImpl {
+      case root(Root)
+      case nonRoot(NonRoot)
+    }
+
+    init(_ info: InfoImpl) {
+      self.info = info
+    }
+
+    var info: InfoImpl!
 
     // For root node.
     struct Root {
@@ -30,25 +38,25 @@ public struct Syntax: SyntaxProtocol, SyntaxHashable {
     }
   }
 
-  private let info: Info
+  var info: Info!
   let raw: RawSyntax
 
   private var rootInfo: Info.Root {
-    switch info {
+    switch info.info! {
     case .root(let info): return info
     case .nonRoot(let info): return info.parent.rootInfo
     }
   }
 
   private var nonRootInfo: Info.NonRoot? {
-    switch info {
+    switch info.info! {
     case .root(_): return nil
     case .nonRoot(let info): return info
     }
   }
 
   private var root: Syntax {
-    switch info {
+    switch info.info! {
     case .root(_): return self
     case .nonRoot(let info): return info.parent.root
     }
@@ -95,13 +103,13 @@ public struct Syntax: SyntaxProtocol, SyntaxHashable {
   }
 
   /// "designated" memberwise initializer of `Syntax`.
-  private init(_ raw: RawSyntax, info: Info) {
+  init(_ raw: RawSyntax, info: Info) {
     self.raw = raw
     self.info = info
   }
 
   init(_ raw: RawSyntax, parent: Syntax, absoluteInfo: AbsoluteSyntaxInfo) {
-    self.init(raw, info: .nonRoot(.init(parent: parent, absoluteInfo: absoluteInfo)))
+    self.init(raw, info: Info(.nonRoot(.init(parent: parent, absoluteInfo: absoluteInfo))))
   }
 
   /// Creates a `Syntax` with the provided raw syntax and parent.
@@ -121,7 +129,7 @@ public struct Syntax: SyntaxProtocol, SyntaxHashable {
   ///     has a chance to retain it.
   static func forRoot(_ raw: RawSyntax, rawNodeArena: SyntaxArena) -> Syntax {
     precondition(rawNodeArena === raw.arena)
-    return Syntax(raw, info: .root(.init(arena: rawNodeArena)))
+    return Syntax(raw, info: Info(.root(.init(arena: rawNodeArena))))
   }
 
   /// Returns the child data at the provided index in this data's layout.
@@ -233,6 +241,7 @@ public struct Syntax: SyntaxProtocol, SyntaxHashable {
   }
 
   /// Create a ``Syntax`` node from a specialized syntax node.
+  @inline(__always)
   public init(_ syntax: some SyntaxProtocol) {
     self = syntax._syntaxNode
   }

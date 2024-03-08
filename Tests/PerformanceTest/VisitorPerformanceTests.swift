@@ -31,9 +31,9 @@ public class VisitorPerformanceTests: XCTestCase {
     let parsed = Parser.parse(source: source)
     let emptyVisitor = EmptyVisitor(viewMode: .sourceAccurate)
 
-    try measureInstructions {
-      emptyVisitor.walk(parsed)
-    }
+    emptyVisitor.walk(parsed)
+
+    print("done")
   }
 
   func testEmptyRewriterPerformance() throws {

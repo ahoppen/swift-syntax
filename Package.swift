@@ -148,7 +148,7 @@ let package = Package(
       name: "SwiftSyntax",
       dependencies: ["SwiftSyntax509", "SwiftSyntax510"],
       exclude: ["CMakeLists.txt"],
-      swiftSettings: swiftSyntaxSwiftSettings
+      swiftSettings: swiftSyntaxSwiftSettings + [.unsafeFlags(["-sil-based-debuginfo"])]
     ),
 
     .testTarget(
