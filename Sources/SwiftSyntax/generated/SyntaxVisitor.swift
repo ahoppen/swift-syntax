@@ -5237,10 +5237,22 @@ open class SyntaxVisitor {
   }
   #endif
   
+  private var recycledNodeInfos: [Syntax.Info] = []
+
   private func visitChildren(_ node: some SyntaxProtocol) {
     let syntaxNode = Syntax(node)
     for childRaw in NonNilRawSyntaxChildren(syntaxNode, viewMode: viewMode) {
-      visit(Syntax(childRaw, parent: syntaxNode))
+      var node: Syntax
+      if let recycledInfo = recycledNodeInfos.popLast() {
+        recycledInfo.info = .nonRoot(.init(parent: syntaxNode, absoluteInfo: childRaw.info))
+        node = Syntax(childRaw.raw, info: recycledInfo)
+      } else {
+        node = Syntax(childRaw, parent: syntaxNode)
+      }
+      visit(node)
+      if isKnownUniquelyReferenced(&node.info) {
+        recycledNodeInfos.append(node.info)
+      }
     }
   }
 }

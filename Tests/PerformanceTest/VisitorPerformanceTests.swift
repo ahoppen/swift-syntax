@@ -25,16 +25,19 @@ public class VisitorPerformanceTests: XCTestCase {
   }
 
   func testEmptyVisitorPerformance() throws {
-    try XCTSkipIf(longTestsDisabled)
-    class EmptyVisitor: SyntaxVisitor {}
+    class EmptyVisitor: SyntaxAnyVisitor {
+      var stored: [Syntax] = []
+      override func visitAny(_ node: Syntax) -> SyntaxVisitorContinueKind {
+        stored.append(node)
+        return .visitChildren
+      }
+    }
 
     let source = try String(contentsOf: inputFile)
     let parsed = Parser.parse(source: source)
     let emptyVisitor = EmptyVisitor(viewMode: .sourceAccurate)
 
-    try measureInstructions {
-      emptyVisitor.walk(parsed)
-    }
+    emptyVisitor.walk(parsed)
   }
 
   func testEmptyRewriterPerformance() throws {
