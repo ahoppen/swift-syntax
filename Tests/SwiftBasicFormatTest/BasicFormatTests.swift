@@ -645,4 +645,9 @@ final class BasicFormatTest: XCTestCase {
       """
     assertFormatted(source: source, expected: source)
   }
+
+  func testNonisolatedUnsafeDoesNotAddSpace() throws {
+    let source = "nonisolated(unsafe) var foo = 0"
+    assertFormatted(source: source, expected: source)
+  }
 }
